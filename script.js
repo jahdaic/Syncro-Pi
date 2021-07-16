@@ -92,19 +92,15 @@ const updateBackground = () => {
 }
 
 const updateClock = () => {
-	var timestamp = new Date();
+	clock.innerText = Intl.DateTimeFormat([], {timeStyle: 'short'}).format(new Date());
 	
-	clock.innerText = timestamp.toLocaleTimeString();
-	
-	setInterval(updateClock, 2000);
+	setTimeout(updateClock, 60000);
 }
 
 const updateDate = () => {
-	var timestamp = new Date();
+	date.innerText = Intl.DateTimeFormat([], {dateStyle: 'full'}).format(new Date());
 	
-	date.innerText = timestamp.toLocaleDateString();
-	
-	setInterval(updateDate, 60000);
+	setTimeout(updateDate, 60000);
 }
 
 const setPosition = (el, position) => {
