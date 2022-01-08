@@ -2,7 +2,7 @@
   "name": "syncro-pi",
   "version": "1.0.0",
   "description": "Small interface for VW Syncro computer",
-  "homepage": "https://jahdaic.github.io/Syncro-Pi/",
+  "homepage": "https://jahdaic.github.io/Syncro-Pi",
   "repository": {
     "type": "git",
     "url": "https://github.com/jahdaic/Syncro-Pi.git"

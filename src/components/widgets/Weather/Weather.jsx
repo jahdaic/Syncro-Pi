@@ -9,6 +9,11 @@ export const Weather = props => {
 	const [weather, setWeather] = useState(null);
 
 	const updateWeather = () => {
+		if(!process.env.REACT_APP_OPEN_WEATHER_API_KEY) {
+			setWeather(false);
+			return;
+		}
+
 		const weatherAPI = new OpenWeatherAPI({
 			key: process.env.REACT_APP_OPEN_WEATHER_API_KEY,
 			locationName: "Port Orange, Florida",
