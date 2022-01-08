@@ -2,7 +2,7 @@
   "name": "syncro-pi",
   "version": "1.0.0",
   "description": "Small interface for VW Syncro computer",
-  "homepage": "https://github.com/jahdaic/Syncro-Pi",
+  "homepage": "https://jahdaic.github.io/Syncro-Pi/",
   "repository": {
     "type": "git",
     "url": "https://github.com/jahdaic/Syncro-Pi.git"
@@ -37,11 +37,14 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "gh-pages": "^3.2.3",
     "prettier": "^2.5.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "lint": "eslint --ext='js,jsx' src/**",
     "lint:fix": "eslint --fix --ext='js,jsx' src/**",
