@@ -1,0 +1,17 @@
+#hula {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+#hula-image {
+	height: 75%;
+	width: 75%;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+	filter: grayscale();
+}
