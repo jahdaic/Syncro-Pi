@@ -40,8 +40,6 @@ export const Weather = props => {
 
 	useEffect(updateWeather, []);
 
-	console.log(weather)
-
 	if(weather === null) return (
 		<div id="weather">
 			<Icon.CloudArrowDown id="weather-icon" />
