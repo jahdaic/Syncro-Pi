@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from "react-router-dom";
 import reportWebVitals from './scripts/reportWebVitals';
+import Router from './Router';
 
 import './css/style.css';
 
-import Main from './pages/Main';
-
 ReactDOM.render(
 	<React.StrictMode>
-		<Main />
+		<BrowserRouter basename="/Syncro-Pi">
+			<Router />
+		</BrowserRouter>
 	</React.StrictMode>,
 	document.getElementById('root'),
 );

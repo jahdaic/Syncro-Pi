@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Clock from 'react-clock';
 
-import '../../../css/clock.css';
+import '../../css/clock.css';
 
 export const AnalogClock = props => {
 	const [time, setTime] = useState(new Date());
@@ -12,7 +12,7 @@ export const AnalogClock = props => {
 		const screenHeight = document.getElementsByTagName('body')[0].clientHeight;
 		const screenWidth = document.getElementsByTagName('body')[0].clientWidth;
 
-		return Math.min(containerHeight, containerWidth, screenHeight, screenWidth) * 0.75;
+		return Math.min(containerHeight, containerWidth, screenHeight, screenWidth) * 0.80;
 	};
 
 	const updateTime = () => {

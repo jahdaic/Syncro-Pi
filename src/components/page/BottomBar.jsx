@@ -1,40 +1,39 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as Icon from 'react-bootstrap-icons';
+import { useHotkeys } from 'react-hotkeys-hook';
 
-export const BottomBar = ({ view, color, onViewChange, onColorChange, ...props }) => {
-	const views = ['analog-clock', 'weather', 'hula'];
+export const BottomBar = ({ color, onColorChange, ...props }) => {
+	const navigate = useNavigate();
+	const location = useLocation();
+	const [lastUpdate, setLastUpdated] = useState(null);
+	const view = location.pathname.split('/')[1] || 'analog-clock';
+	const views = ['analog-clock', 'weather', 'spotify', 'hula'];
 	const colors = ['white', 'dark', 'red', 'green'];
 
 	const prevView = () => {
-		if(typeof onViewChange !== 'function') return;
-
 		const currentIndex = views.indexOf(view);
+		const newView = currentIndex === 0 ? views[views.length - 1] : views[currentIndex - 1];
 
-		if (currentIndex === 0) {
-			onViewChange(views[views.length - 1]);
-			return;
-		}
+		console.log('Prev View', view, currentIndex, newView );
 
-		onViewChange(views[currentIndex - 1]);
+		navigate(newView);
+		setLastUpdated(Date.now());
 	};
 
 	const nextView = () => {
-		if(typeof onViewChange !== 'function') return;
-
 		const currentIndex = views.indexOf(view);
+		const newView = currentIndex === views.length - 1 ? views[0] : views[currentIndex + 1];
 
-		if (currentIndex === views.length - 1) {
-			onViewChange(views[0]);
-			return;
-		}
+		console.log('Next View', view, currentIndex, newView );
 
-		onViewChange(views[currentIndex + 1]);
+		navigate(newView);
+		setLastUpdated(Date.now());
 	};
 
 	const nextColor = () => {
 		if(typeof onColorChange !== 'function') return;
-
 
 		const currentIndex = colors.indexOf(color);
 
@@ -45,6 +44,12 @@ export const BottomBar = ({ view, color, onViewChange, onColorChange, ...props }
 
 		onColorChange(colors[currentIndex + 1]);
 	};
+
+	useHotkeys('left', prevView);
+	useHotkeys('right', nextView);
+	useHotkeys('c', nextColor);
+
+	console.log('Bottom', view, color, onColorChange)
 
 	return (
 		<div id="bottom">
@@ -62,14 +67,11 @@ export const BottomBar = ({ view, color, onViewChange, onColorChange, ...props }
 }
 
 BottomBar.propTypes = {
-	view: PropTypes.string,
 	color: PropTypes.string,
-	onViewChange: PropTypes.func.isRequired,
 	onColorChange: PropTypes.func.isRequired,
 };
 
 BottomBar.defaultProps = {
-	view: 'analog-clock',
 	color: 'white',
 };
 

@@ -1,0 +1,84 @@
+#spotify {
+	max-width: 80%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#spotify-album {
+	height: 23.5vh;
+	width: 23.5vh;
+	aspect-ratio: 1 / 1;
+	border: 1px solid #ffffff;
+	background-size: contain;
+	background-repeat: no-repeat;
+	filter: saturate(0%);
+	margin-bottom: 1em;
+}
+
+#spotify-song {
+	width: 100%;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#spotify-artist {
+	font-size: 0.75em;
+	text-align: center;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#spotify-progress {
+	position: relative;
+	width: 100%;
+	height: 0.5em;
+	border: 1px solid #ffffff;
+	border-radius: 1em;
+	padding: 1px;
+	margin-top: 1em;
+	margin-bottom: 0.75em;
+}
+
+#spotify-progress-current {
+	font-size: 0.5em;
+	position: absolute;
+	top: -1.2em;
+	left: 0;
+}
+
+#spotify-progress-total {
+	font-size: 0.5em;
+	position: absolute;
+	top: -1.2em;
+	right: 0;
+}
+
+#spotify-progress-fill {
+	width: 35%;
+	height: 100%;
+	background-color: #ffffff;
+	border-radius: 1em;
+}
+
+#spotify-controls {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#spotify-play {
+	font-size: 2em;
+}
+
+
+#spotify-prev, #spotify-next {
+	font-size: 1.5em;
+}

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import '../../../css/hula.css';
-import HulaGirl from '../../../images/hula-girl.gif';
-import Stitch from '../../../images/stitch.gif';
-import Shantae from '../../../images/shantae.gif';
+import '../../css/hula.css';
+import HulaGirl from '../../images/hula-girl.gif';
+import Stitch from '../../images/stitch.gif';
+import Shantae from '../../images/shantae.gif';
 
 export const Hula = props => {
 	const [image, setImage] = useState('hula-girl');

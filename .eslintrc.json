@@ -1,24 +1,24 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "jest": true
-    },
-    "extends": [
-        "plugin:react/recommended",
-        "airbnb",
-        "prettier"
-    ],
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
-    "plugins": [ "react", "prettier" ],
-    "rules": {
-        "indent": ["error", "tab", { "SwitchCase": 1 }],
+	"env": {
+		"browser": true,
+		"es2021": true,
+		"jest": true
+	},
+	"extends": [
+		"plugin:react/recommended",
+		"airbnb",
+		"prettier"
+	],
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+		},
+		"ecmaVersion": 12,
+		"sourceType": "module"
+	},
+	"plugins": [ "react", "prettier" ],
+	"rules": {
+		"indent": ["error", "tab", { "SwitchCase": 1 }],
 		"max-len": ["error", { "code": 120, "tabWidth": 2 }],
 		"no-plusplus": "off",
 		"prefer-promise-reject-errors": "off",
@@ -31,7 +31,9 @@
 		"brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
 		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
 		"react-hooks/exhaustive-deps": "off",
-        "react/function-component-definition": "off",
-        "import/no-named-as-default": "off"
-    }
+		"react/function-component-definition": "off",
+		"import/no-named-as-default": "off",
+		"no-restricted-globals": ["off"],
+		"no-use-before-define": ["off"]
+	}
 }

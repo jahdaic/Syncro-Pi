@@ -1,3 +1,11 @@
+#analog-clock {
+	max-width: 80%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .react-clock {
 	display: block;
 	position: relative;
@@ -62,6 +70,13 @@
 .react-clock__minute-hand__body {
 	width: 8px !important;
 	top: 5% !important;
+}
+
+.react-clock__second-hand {
+	transition-property: transform;
+	transition-timing-function: linear;
+	transition-duration: 1s;
+	transition-delay: 0s;
 }
 
 .react-clock__second-hand__body {

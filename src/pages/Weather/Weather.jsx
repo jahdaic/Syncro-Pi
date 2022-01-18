@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import OpenWeatherAPI from 'openweather-api-node';
 import * as Icon from 'react-bootstrap-icons';
-import * as Utility from '../../../scripts/utility';
+import * as Utility from '../../scripts/utility';
 
-import '../../../css/weather.css';
+import '../../css/weather.css';
 
 export const Weather = props => {
 	const [weather, setWeather] = useState(null);
@@ -47,12 +47,27 @@ export const Weather = props => {
 			setLocation(false);
 			return;
 		}
-
+		
 		navigator.geolocation.getCurrentPosition(updateWeather, err => {
 			setWeather(false);
 			setLocation(false);
 		});
 	}
+
+	const askForLocationPermission = () => {
+		if ( navigator.permissions && navigator.permissions.query) {
+			navigator.permissions.query({ name: 'geolocation' })
+				.then(result => {
+					if ( result.state === 'granted' || result.state === 'prompt' ) {
+						getLocation();
+					}
+				})
+				.catch(err => {});
+		}
+		else if (navigator.geolocation) {
+			getLocation();
+		}
+	};
 
 	const getWeatherIcon = code => {
 		const id = 'weather-icon';
@@ -101,14 +116,12 @@ export const Weather = props => {
 	};
 
 	useEffect(() => {
-		const interval = setInterval(getLocation, 1800000); // 30 minutes
+		const interval = setInterval(askForLocationPermission, 1800000); // 30 minutes
 
 		return () => clearInterval(interval);
 	}, []);
 
-	useEffect(getLocation, []);
-
-	console.log('Weather', weather);
+	useEffect(askForLocationPermission, []);
 
 	if(weather === null) return (
 		<div id="weather">
@@ -123,7 +136,7 @@ export const Weather = props => {
 		<div id="weather">
 			<Icon.PinMap id="weather-icon" />
 			<div id="weather-description">
-				Could not get location
+				No location
 			</div>
 		</div>
 	);
