@@ -136,7 +136,7 @@ export const Weather = props => {
 		<div id="weather">
 			<Icon.PinMap id="weather-icon" />
 			<div id="weather-description">
-				No location
+				Error getting location
 			</div>
 		</div>
 	);
