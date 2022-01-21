@@ -16,8 +16,6 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 		const currentIndex = views.indexOf(view);
 		const newView = currentIndex === 0 ? views[views.length - 1] : views[currentIndex - 1];
 
-		console.log('Prev View', view, currentIndex, newView );
-
 		navigate(newView);
 		setLastUpdated(Date.now());
 	};
@@ -25,8 +23,6 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 	const nextView = () => {
 		const currentIndex = views.indexOf(view);
 		const newView = currentIndex === views.length - 1 ? views[0] : views[currentIndex + 1];
-
-		console.log('Next View', view, currentIndex, newView );
 
 		navigate(newView);
 		setLastUpdated(Date.now());
@@ -45,8 +41,6 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 	useHotkeys('left', prevView);
 	useHotkeys('right', nextView);
 	useHotkeys('c', nextColor);
-
-	// console.log('Bottom', view, color, onColorChange)
 
 	return (
 		<div id="bottom">

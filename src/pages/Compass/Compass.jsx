@@ -20,13 +20,6 @@ export const Compass = props => {
 	const getDisplayLongitude = () =>
 		`${Math.abs(position?.longitude).toFixed(3)}° ${position?.longitude >= 0 ? 'E' : 'W'}`;
 
-	const getDisplayAltitude = () => {
-		const altitude = Math.round(position?.altitude);
-		const accuracy = position?.altitudeAccuracy ? Math.round((position?.altitudeAccuracy || 0) * 3.28084) : 0;
-
-		return `${altitude} ${accuracy ? `±${accuracy}` : ''}ft`;
-	}
-
 	const updatePosition = () => {
 		if(!navigator.geolocation) return;
 		
@@ -35,13 +28,14 @@ export const Compass = props => {
 
 			setPosition(prev => ({
 				...(prev || {}),
-				heading: (prev?.heading || 0) + Math.random() * (15 + 15) - 15,
+				// heading: (prev?.heading || 0) + Math.random() * (15 + 15) - 15,
 				tilt: (prev?.tilt || 0) + Math.random() * (3 + 3) - 3,
 				climb: (prev?.climb || 0) + Math.random() * (3 + 3) - 3,
-				latitude, longitude, altitude, speed, accuracy, altitudeAccuracy
+
+				heading, latitude, longitude, altitude, speed, accuracy, altitudeAccuracy
 			}));
 		}, err => {
-			console.log(err);
+			console.error(err);
 			setPosition(-1);
 		}, {enableHighAccuracy: true});
 	};
@@ -72,8 +66,6 @@ export const Compass = props => {
 	}, []);
 
 	useEffect(askForLocationPermission, []);
-
-	console.log(position);
 
 	if(position === null) return (
 		<div id="weather">
@@ -106,8 +98,8 @@ export const Compass = props => {
 				<div id="compass-climb" style={{backgroundPositionY: `${-(position?.climb || 0) * 79 / 45 + 50}%`}} />
 			</div>
 			<div id="compass-positioning">
-				<div id="compass-altitude">{getDisplayAltitude()}</div>
-				<div id="compass-altitude-accuracy">{`+/- ${Math.round((position?.accuracy || 0) * 3.28084)} ft`}</div>
+				<div id="compass-altitude">{`${Math.round((position?.altitude || 0) * 3.28084)} ft`}</div>
+				<div id="compass-speed">{`${Math.round((position.speed || 0) * 3.28084)} mph`}</div>
 			</div>
 		</div>
 	);

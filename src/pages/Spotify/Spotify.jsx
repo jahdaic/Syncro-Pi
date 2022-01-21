@@ -34,7 +34,7 @@ export const Spotify = props => {
 
 	const handleError = (err, retry) => {
 		const {status, message} = err?.body?.error || {};
-		console.log('Error', status, message, err?.headers, err?.statusCode);
+		console.error('Error', status, message, err?.headers, err?.statusCode);
 
 		if(status === 401) {
 			reauthorize().then(() => { if(retry) retry(); });
@@ -130,16 +130,12 @@ export const Spotify = props => {
 	};
 
 	const updatePitches = () => {
-		if(!track?.is_playing) return 500;
+		if(!track?.is_playing) return;
 
 		const progress = getCurrentProgress() / 1000;
 		const segment = trackAnalysis?.segments?.find(s => s.start >= progress);
 
 		setPitches(segment?.pitches || []);
-
-		console.log(segment?.pitches || []);
-
-		return (segment?.duration || 0.1) * 1000;
 	}
 
 	const playPause = () => {

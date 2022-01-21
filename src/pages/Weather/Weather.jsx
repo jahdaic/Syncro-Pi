@@ -150,8 +150,6 @@ export const Weather = props => {
 		</div>
 	);
 
-	console.log(weather)
-
 	return (
 		<div id="weather">
 			<div id="weather-top">
