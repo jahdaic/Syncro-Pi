@@ -24,7 +24,7 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
-	border: 1px solid #ffffff;
+	border: 2px solid currentColor;
 	border-radius: 50%;
 }
 .react-clock__hand {
@@ -36,7 +36,7 @@
 }
 .react-clock__hand__body {
 	position: absolute;
-	background-color: #ffffff;
+	background-color: currentColor;
 	transform: translateX(-50%);
 }
 .react-clock__mark {
@@ -48,7 +48,7 @@
 }
 .react-clock__mark__body {
 	position: absolute;
-	background-color: #ffffff;
+	background-color: currentColor;
 	transform: translateX(-50%);
 }
 .react-clock__mark__number {

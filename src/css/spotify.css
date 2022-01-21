@@ -10,7 +10,7 @@
 	height: 23.5vh;
 	width: 23.5vh;
 	aspect-ratio: 1 / 1;
-	border: 1px solid #ffffff;
+	border: 1px solid currentColor;
 	background-size: contain;
 	background-repeat: no-repeat;
 	filter: saturate(0%);
@@ -37,10 +37,10 @@
 #spotify-progress {
 	position: relative;
 	width: 100%;
-	height: 0.5em;
-	border: 1px solid #ffffff;
+	height: 1em;
+	border: 2px solid currentColor;
 	border-radius: 1em;
-	padding: 1px;
+	padding: 2px;
 	margin-top: 1em;
 	margin-bottom: 0.75em;
 }
@@ -62,7 +62,7 @@
 #spotify-progress-fill {
 	width: 35%;
 	height: 100%;
-	background-color: #ffffff;
+	background-color: currentColor;
 	border-radius: 1em;
 }
 
@@ -81,4 +81,21 @@
 
 #spotify-prev, #spotify-next {
 	font-size: 1.5em;
+}
+
+#spotify-graph {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	justify-content: space-evenly;
+	transition-property: height;
+	transition-timing-function: linear;
+	transition-duration: 0.1s;
+	transition-delay: 0s;
+}
+
+#spotify-graph > * {
+	width: 100%;
+	background-color: currentColor;
 }

@@ -9,10 +9,14 @@ export const TopBar = props => {
 	};
 
 	useEffect(() => {
-		const interval = setInterval(updateDate, 15000); // 15 seconds
+		const interval = setInterval(updateDate, 1000); // 1 second
 
 		return () => clearInterval(interval);
 	}, []);
+
+	if(location.pathname.includes('digital-clock')) {
+		return <div id="top">&nbsp;</div>;
+	}
 
 	return (
 		<div id="top">

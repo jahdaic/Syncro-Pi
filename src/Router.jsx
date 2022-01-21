@@ -5,12 +5,14 @@ import TopBar from './components/page/Topbar';
 import BottomBar from './components/page/BottomBar';
 
 import AnalogClock from './pages/AnalogClock';
+import DigitalClock from './pages/DigitalClock';
+import Compass from './pages/Compass';
 import Weather from './pages/Weather';
 import Spotify from './pages/Spotify';
 import Hula from './pages/Hula';
 
 export const Router = props => {
-	const [color, setColor] = useState('white');
+	const [color, setColor] = useState(localStorage.getItem('color') || 'white');
 
 	return (
 		<Container filter={color}>
@@ -20,6 +22,8 @@ export const Router = props => {
 				<Routes>
 					<Route path="/" element={<AnalogClock />} />
 					<Route path="/analog-clock" element={<AnalogClock />} />
+					<Route path="/digital-clock" element={<DigitalClock />} />
+					<Route path="/compass" element={<Compass />} />
 					<Route path="/weather" element={<Weather />} />
 					<Route path="/spotify" element={<Spotify />} />
 					<Route path="/hula" element={<Hula />} />

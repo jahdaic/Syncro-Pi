@@ -1,3 +1,10 @@
+@font-face {
+	font-family: 'LCD';
+	font-style: normal;
+	font-weight: 700;
+	src: local('LCD'), url('../fonts/lcd.otf') format('opentype');
+  }
+
 :root {
 	font-size: 16px;
 }
@@ -68,6 +75,33 @@ body {
 	background-color: #000000;
 	mix-blend-mode: unset;
 	opacity: 50%;
+}
+
+#container.filter-lcd {
+	background-color: #ffffff;
+}
+
+#container.filter-lcd * {
+	color: #252421 !important;
+	font-family: 'LCD', 'Courier New', Courier, monospace;
+	text-shadow: 0.25rem 0.25rem 2px rgba(0, 0, 0, 0.20);
+	text-transform: uppercase;
+}
+
+#container.filter-lcd svg, #container.filter-lcd .react-clock {
+	filter: drop-shadow(0.25rem 0.25rem 2px rgba(0, 0, 0, 0.20));
+}
+
+#container.filter-lcd #compass-compass {
+	filter: drop-shadow(0.25rem 0.25rem 2px rgba(0, 0, 0, 0.20));
+}
+
+#container.filter-lcd #compass-directions, #container.filter-lcd #compass-tilt, #container.filter-lcd #compass-climb {
+	filter: invert(1);
+}
+
+#container.filter-lcd:before {
+	background-color: #989c7f;
 }
 
 #container.filter-red:before {

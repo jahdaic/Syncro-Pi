@@ -150,6 +150,8 @@ export const Weather = props => {
 		</div>
 	);
 
+	console.log(weather)
+
 	return (
 		<div id="weather">
 			<div id="weather-top">
@@ -166,12 +168,12 @@ export const Weather = props => {
 			<div id="weather-description">{Utility.toTitleCase(weather?.description)}</div>
 			<div id="weather-bottom">
 				<div id="weather-rain">
-					<Icon.DropletHalf />
+					<Icon.UmbrellaFill />
 					{`${weather?.rain}"`}
 				</div>
 				<div id="weather-wind">
 					<Icon.Wind />
-					{`${Number(weather?.wind.speed).toFixed(1)}${degreesToCompass(weather?.wind.deg)}`}
+					{`${Number(weather?.wind.speed).toFixed(0)} ${degreesToCompass(weather?.wind.deg)}`}
 				</div>
 				<div id="weather-uv">
 					<Icon.SunFill />

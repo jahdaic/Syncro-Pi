@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Clock from 'react-clock';
 
-import '../../css/clock.css';
+import '../../css/analog-clock.css';
 
 export const AnalogClock = props => {
 	const [time, setTime] = useState(new Date());

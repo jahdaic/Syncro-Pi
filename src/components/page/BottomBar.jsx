@@ -9,8 +9,8 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 	const location = useLocation();
 	const [lastUpdate, setLastUpdated] = useState(null);
 	const view = location.pathname.split('/')[1] || 'analog-clock';
-	const views = ['analog-clock', 'weather', 'spotify', 'hula'];
-	const colors = ['white', 'dark', 'red', 'green'];
+	const views = ['analog-clock', 'digital-clock', 'compass', 'weather', 'spotify', 'hula'];
+	const colors = ['white', 'dark', 'lcd', 'red', 'green'];
 
 	const prevView = () => {
 		const currentIndex = views.indexOf(view);
@@ -36,20 +36,17 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 		if(typeof onColorChange !== 'function') return;
 
 		const currentIndex = colors.indexOf(color);
+		const newColor = currentIndex === colors.length - 1 ? colors[0] : colors[currentIndex + 1];
 
-		if (currentIndex === colors.length - 1) {
-			onColorChange(colors[0]);
-			return;
-		}
-
-		onColorChange(colors[currentIndex + 1]);
+		onColorChange(newColor);
+		localStorage.setItem('color', newColor);
 	};
 
 	useHotkeys('left', prevView);
 	useHotkeys('right', nextView);
 	useHotkeys('c', nextColor);
 
-	console.log('Bottom', view, color, onColorChange)
+	// console.log('Bottom', view, color, onColorChange)
 
 	return (
 		<div id="bottom">

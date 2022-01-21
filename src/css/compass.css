@@ -1,0 +1,75 @@
+#compass-compass {
+	position: relative;
+	display: flex;
+	margin: 0 auto 0.5em auto;
+}
+
+#compass-directions {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-image: url('../images/compass.svg');
+	background-size: contain;
+	background-repeat: no-repeat;
+	transition-property: transform;
+	transition-timing-function: linear;
+	transition-duration: 1s;
+	transition-delay: 0s;
+}
+
+#compass-tilt {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-image: url('../images/tilt.svg');
+	background-size: contain;
+	background-repeat: no-repeat;
+	transition-property: transform;
+	transition-timing-function: linear;
+	transition-duration: 1s;
+	transition-delay: 0s;
+}
+
+#compass-tilt-value {
+	position: absolute;
+	top: calc(50% - 0.5em);
+	left: calc(60% - 0.5em + 5%);
+	height: 100%;
+	width: 100%;
+	font-size: 0.75em;
+	text-align: left;
+}
+
+#compass-climb {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-image: url('../images/climb.svg');
+	background-size: cover;
+	background-position: center top 50%;
+	background-repeat: no-repeat;
+	transition-property: background-position-y;
+	transition-timing-function: linear;
+	transition-duration: 1s;
+	transition-delay: 0s;
+	clip-path: circle(33% at center);
+}
+
+#compass-angles {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
+
+#compass-coordinates {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.65em;
+	margin-bottom: 1em;
+}
+
+#compass-positioning {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.65em;
+}
