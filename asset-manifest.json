@@ -1,18 +1,22 @@
 {
   "files": {
-    "main.css": "/Syncro-Pi/static/css/main.bdd277b4.css",
-    "main.js": "/Syncro-Pi/static/js/main.f4f87edc.js",
+    "main.css": "/Syncro-Pi/static/css/main.f7e2ee4c.css",
+    "main.js": "/Syncro-Pi/static/js/main.68dc059b.js",
     "static/js/787.3de7e60d.chunk.js": "/Syncro-Pi/static/js/787.3de7e60d.chunk.js",
     "static/media/hula-girl.gif": "/Syncro-Pi/static/media/hula-girl.eb10a9c3371511f1f00e.gif",
     "static/media/stitch.gif": "/Syncro-Pi/static/media/stitch.d7609eb18a354223630c.gif",
     "static/media/shantae.gif": "/Syncro-Pi/static/media/shantae.b1d986ba21d121380c6a.gif",
+    "static/media/lcd.otf": "/Syncro-Pi/static/media/lcd.9234be453b055a7cf3ba.otf",
+    "static/media/compass.svg": "/Syncro-Pi/static/media/compass.b062e38a275e64e5ac99.svg",
+    "static/media/climb.svg": "/Syncro-Pi/static/media/climb.54259bc9fd1924a4a26f.svg",
     "index.html": "/Syncro-Pi/index.html",
-    "main.bdd277b4.css.map": "/Syncro-Pi/static/css/main.bdd277b4.css.map",
-    "main.f4f87edc.js.map": "/Syncro-Pi/static/js/main.f4f87edc.js.map",
+    "static/media/tilt.svg": "/Syncro-Pi/static/media/tilt.eb182c8b880c21e7d8ba.svg",
+    "main.f7e2ee4c.css.map": "/Syncro-Pi/static/css/main.f7e2ee4c.css.map",
+    "main.68dc059b.js.map": "/Syncro-Pi/static/js/main.68dc059b.js.map",
     "787.3de7e60d.chunk.js.map": "/Syncro-Pi/static/js/787.3de7e60d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.bdd277b4.css",
-    "static/js/main.f4f87edc.js"
+    "static/css/main.f7e2ee4c.css",
+    "static/js/main.68dc059b.js"
   ]
 }
