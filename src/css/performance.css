@@ -1,9 +1,9 @@
 #performance {
-	width: 85%;
+	width: 90%;
 }
 
 #performance-speed {
-	font-size: 5em;
+	font-size: 4em;
 	text-align: center;
 }
 
@@ -15,6 +15,7 @@
 	border-top: 2px solid rgb(var(--text-color));
 	padding-top: 1em;
 }
+
 #performance-stats > * {
 	min-width: 40%;
 	display: flex;
@@ -26,7 +27,7 @@
 }
 
 #performance-timer {
-	font-size: 1.7em;
+	font-size: 1.5em;
 	text-align: center;
 	border-top: 2px solid rgb(var(--text-color));
 	margin: 0.5em 0 0.25em 0;
