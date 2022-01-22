@@ -8,6 +8,7 @@ import AnalogClock from './pages/AnalogClock';
 import DigitalClock from './pages/DigitalClock';
 import Compass from './pages/Compass';
 import Weather from './pages/Weather';
+import Performance from './pages/Performance';
 import Spotify from './pages/Spotify';
 import Hula from './pages/Hula';
 
@@ -25,6 +26,7 @@ export const Router = props => {
 					<Route path="/digital-clock" element={<DigitalClock />} />
 					<Route path="/compass" element={<Compass />} />
 					<Route path="/weather" element={<Weather />} />
+					<Route path="/performance" element={<Performance />} />
 					<Route path="/spotify" element={<Spotify />} />
 					<Route path="/hula" element={<Hula />} />
 				</Routes>

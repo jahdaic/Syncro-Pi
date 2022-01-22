@@ -172,7 +172,7 @@ export const Spotify = props => {
 		const interval = setInterval(() => {
 			if( !SpotifyAPI.getAccessToken() ) return;
 			updateStatus();
-		}, 5000); // 5 seconds
+		}, 2500); // 2.5 seconds
 
 		return () => clearInterval(interval);
 	}, []);

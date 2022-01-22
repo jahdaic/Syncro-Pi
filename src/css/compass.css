@@ -1,3 +1,7 @@
+#compass {
+	width: 90%;
+}
+
 #compass-compass {
 	position: relative;
 	display: flex;

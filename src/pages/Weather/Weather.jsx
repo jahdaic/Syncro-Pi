@@ -175,7 +175,7 @@ export const Weather = props => {
 				</div>
 				<div id="weather-uv">
 					<Icon.SunFill />
-					{weather?.uvi}
+					{Math.round(weather?.uvi || 0)}
 				</div>
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as Icon from 'react-bootstrap-icons';
@@ -8,34 +8,45 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [lastUpdate, setLastUpdated] = useState(null);
-	const view = location.pathname.split('/')[1] || 'analog-clock';
-	const views = ['analog-clock', 'digital-clock', 'compass', 'weather', 'spotify', 'hula'];
+	const [view, setView] = useState(location.pathname.split('/')[1] || 'analog-clock');
+	const views = ['analog-clock', 'digital-clock', 'compass', 'weather', 'performance', 'spotify', 'hula'];
 	const colors = ['white', 'dark', 'lcd', 'red', 'green'];
 
 	const prevView = () => {
-		const currentIndex = views.indexOf(view);
-		const newView = currentIndex === 0 ? views[views.length - 1] : views[currentIndex - 1];
-
-		navigate(newView);
-		setLastUpdated(Date.now());
+		setView(currentView => {
+			const currentIndex = views.indexOf(currentView);
+			const newView = currentIndex === 0 ? views[views.length - 1] : views[currentIndex - 1];
+	
+			navigate(newView);
+			setLastUpdated(Date.now());
+			return newView;
+		});
 	};
 
 	const nextView = () => {
-		const currentIndex = views.indexOf(view);
-		const newView = currentIndex === views.length - 1 ? views[0] : views[currentIndex + 1];
-
-		navigate(newView);
-		setLastUpdated(Date.now());
+		setView(currentView => {
+			const currentIndex = views.indexOf(currentView);
+			const newView = currentIndex === views.length - 1 ? views[0] : views[currentIndex + 1];
+	
+			console.log('Next View', prevView, newView, currentIndex)
+	
+			navigate(newView);
+			setLastUpdated(Date.now());
+			return newView;
+		});
 	};
 
 	const nextColor = () => {
 		if(typeof onColorChange !== 'function') return;
 
-		const currentIndex = colors.indexOf(color);
-		const newColor = currentIndex === colors.length - 1 ? colors[0] : colors[currentIndex + 1];
+		onColorChange(currentColor => {
+			const currentIndex = colors.indexOf(currentColor);
+			const newColor = currentIndex === colors.length - 1 ? colors[0] : colors[currentIndex + 1];
+	
+			localStorage.setItem('color', newColor);
+			return newColor;
+		});
 
-		onColorChange(newColor);
-		localStorage.setItem('color', newColor);
 	};
 
 	useHotkeys('left', prevView);
@@ -48,7 +59,7 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 				<Icon.CaretLeftFill />
 			</div>
 			<div onClick={nextColor} onKeyPress={nextColor} role="button" tabIndex={0}>
-				<Icon.Lightbulb />
+				<Icon.LightbulbFill />
 			</div>
 			<div onClick={nextView} onKeyPress={nextView} role="button" tabIndex={0}>
 				<Icon.CaretRightFill />

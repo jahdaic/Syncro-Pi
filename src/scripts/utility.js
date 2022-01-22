@@ -27,3 +27,10 @@ export const msToDuration = (time) => {
  * @returns {Number}
  */
 export const ratioToPercent = (part, total) => part >= total ? 100 : part / total * 100;
+
+/**
+ * Converts a velocity from meters per second to miles per hour
+ * @param {Number} mps - The velocity to convert in meters per second 
+ * @returns {Number}
+ */
+export const mpsToMPH = (mps) => mps * 2.236936;

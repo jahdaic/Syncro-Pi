@@ -1,0 +1,44 @@
+#performance {
+	width: 85%;
+}
+
+#performance-speed {
+	font-size: 5em;
+	text-align: center;
+}
+
+#performance-stats {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	border-top: 2px solid rgb(var(--text-color));
+	padding-top: 1em;
+}
+#performance-stats > * {
+	min-width: 40%;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	text-align: left;
+	/* margin-top: 0.5em; */
+}
+
+#performance-timer {
+	font-size: 1.7em;
+	text-align: center;
+	border-top: 2px solid rgb(var(--text-color));
+	margin: 0.5em 0 0.25em 0;
+	padding-top: 0.5em;
+}
+
+#performance-buttons {
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+}
+
+#performance-buttons button {
+	
+}
