@@ -1,67 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-bootstrap-icons';
-import * as Utility from '../../scripts/utility';
+import Location from '../../components/Location';
 
 import '../../css/performance.css';
 
-const resolution = 250; // 100 milliseconds
+const resolution = 100; // 100 milliseconds
 
 export const Performance = props => {
 	const [time, setTime] = useState(new Date());
-	const [speed, setSpeed] = useState(null);
-	const [run, setRun] = useState({start: null, end: null, times: [], speeds: []});
+	const [speed, setSpeed] = useState(0);
+	const [run, setRun] = useState({start: null, end: null, topSpeed: null, to60: null, times: [], speeds: []});
 
-	const updateTime = () => {
-		setTime(new Date());
-	};
-
-	useEffect(() => {
-		const interval = setInterval(updateTime, 1000); // 1 second
-
-		return () => clearInterval(interval);
-	}, []);
+	const updateTime = () => setTime(new Date());
 
 	const logTime = () => {
-		navigator.geolocation.getCurrentPosition(location => {
-			setRun(currentRun => {
-				if(currentRun.end) return{...currentRun};
 
-				const now = Date.now();
+		setRun(currentRun => {
+			if(currentRun.end) return{...currentRun};
 
-				setSpeed(location.coords.speed);
-				setTimeout(logTime, resolution);
+			const now = Date.now();
+			setTimeout(logTime, resolution);
 
-				return {
-					...currentRun,
-					start: currentRun.start || now,
-					times: [...currentRun.times, now],
-					speeds: [...currentRun.speeds, location.coords.speed || 0]
-				};
-			});
-		}, err => {
-			console.error(err);
-			setSpeed(-1);
-			endTimer();
-		}, {enableHighAccuracy: true});
+			return {
+				...currentRun,
+				start: currentRun.start || now,
+				topSpeed: Math.max(speed, currentRun.topSpeed),
+				to60: speed >= 60 && !currentRun.to60 ? speed : currentRun.to60,
+				// times: [...currentRun.times, now],
+				// speeds: [...currentRun.speeds, currentSpeed || 0]
+			};
+		});
 	}
 
 	const endTimer = () => setRun(currentRun => ({ ...currentRun, end: Date.now() }));
 
-	const resetTimer = () => setRun({start: null, end: null, times: [], speeds: []});
+	const restartTimer = () => {
+		setRun(currentRun => ({ ...currentRun, end: null }));
+		logTime();
+	}
 
-	const getTopSpeed = () => Utility.mpsToMPH(run.speeds.reduce((a, b) => Math.max(a, b), 0) || 0);
+	const resetTimer = () => setRun({start: null, end: null, topSpeed: null, to60: null, times: [], speeds: []});
 
-	const getAcceleration = () => {
-		let timeTo60 = null;
+	const getCurrentSpeed = () => String(Math.floor(speed || 0)).padStart(3, '0');
 
-		run.speeds.forEach((s, i) => {
-			if( Utility.mpsToMPH(s) >= 60 ) timeTo60 = run.times[i]; 
-		});
+	const getTopSpeed = () => String(Math.floor(run.topSpeed || 0)).padStart(3, '0');
 
-		if(timeTo60 === null) return 'N/A';
-
-		return `${Number((timeTo60 - run.start) / 1000).toFixed(2)} s`;
-	};
+	const getAcceleration = () => run.to60 ? `${run.to60.toFixed(2)} s` : 'N/A';
 
 	const getDisplayTime = () => {
 		const now = Date.now();
@@ -73,42 +57,15 @@ export const Performance = props => {
 		return `${minutes}:${seconds}.${milliseconds}`;
 	};
 
-	const updatePosition = () => {
-		if(!navigator.geolocation) return;
-		
-		navigator.geolocation.getCurrentPosition(location => {
-			setSpeed(location.coords.speed);
-		}, err => {
-			console.error(err);
-			setSpeed(-1);
-		}, {enableHighAccuracy: true});
-	};
+	useEffect(() => {
+		const interval = setInterval(updateTime, 1000); // 1 second
 
-	const askForLocationPermission = () => {
-		// updatePosition();
-		if ( navigator.permissions && navigator.permissions.query) {
-			navigator.permissions.query({ name: 'geolocation' })
-				.then(result => {
-					if ( result.state === 'granted' || result.state === 'prompt' ) {
-						updatePosition();
-					}
-				})
-				.catch(err => {
-					console.log(err);
-					setSpeed(-1);
-				});
-		}
-		else if (navigator.geolocation) {
-			updatePosition();
-		}
-	};
+		return () => clearInterval(interval);
+	}, []);
 
-	useEffect(askForLocationPermission, []);
-
-	console.log(speed, run);
-
-	if(speed === -1)  return (
+	if(!speed && speed !== 0) return (
 		<div id="weather">
+			<Location onUpdate={location => setSpeed(location?.speed)} />
 			<Icon.PinMap id="weather-icon" />
 			<div id="weather-description">
 					Error getting location
@@ -118,9 +75,11 @@ export const Performance = props => {
 
 	return (
 		<div id="performance">
+			<Location onUpdate={location => setSpeed(location?.speed)} />
 			<div id="performance-speed">
-				{`${speed || '000'}`}
+				{getCurrentSpeed()}
 			</div>
+			<hr />
 			<div id="performance-stats">
 				<div>
 					<span>{getTopSpeed()} mph</span>
@@ -128,7 +87,7 @@ export const Performance = props => {
 				</div>
 				<div>
 					<span>{getAcceleration()}</span>
-					<span>0-60</span>
+					<span>00 - 60 </span>
 				</div>
 				{/* <div>
 					<span>1.2 G</span>
@@ -139,6 +98,7 @@ export const Performance = props => {
 					<span>0-120</span>
 				</div> */}
 			</div>
+			<hr />
 			<div id="performance-timer">
 				{getDisplayTime()}
 			</div>
@@ -146,9 +106,9 @@ export const Performance = props => {
 				{
 					run.start && !run.end ?
 						<button type="button" onClick={endTimer}>
-							Stop 
+							Stop
 						</button> :
-						<button type="button" onClick={logTime}>
+						<button type="button" onClick={run.end ? restartTimer : logTime}>
 							Start
 						</button>
 				}

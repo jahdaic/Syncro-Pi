@@ -1,0 +1,25 @@
+#settings {
+	width: 100%;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+#settings-options {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+    flex-grow: 1;
+}
+
+#settings-theme {
+	width: 100%;
+}
+
+#settings-buttons {
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	margin-top: 1em;
+}

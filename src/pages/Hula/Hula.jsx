@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import '../../css/hula.css';
 import HulaGirl from '../../images/hula-girl.gif';
@@ -16,16 +17,33 @@ export const Hula = props => {
 		return Stitch;
 	};
 
-	const nextImage = () => {
-		const currentIndex = images.indexOf(image);
+	const nextImage = () => 
+		setImage(currentImage => {
+			const currentIndex = images.indexOf(currentImage);
 
-		if (currentIndex === images.length - 1) {
-			setImage(images[0]);
-			return;
-		}
+			if (currentIndex === images.length - 1) {
+				return images[0];
+			}
+	
+			return images[currentIndex + 1];
+		});
 
-		setImage(images[currentIndex + 1]);
-	};
+	const prevImage = () => 
+		setImage(currentImage => {
+			const currentIndex = images.indexOf(currentImage);
+
+			if (currentIndex === 0) {
+				return images[images.length - 1];
+			}
+
+			return images[currentIndex - 1];
+		});
+
+	useHotkeys('*', ev => {
+		if(ev.key === 'MediaTrackNext') nextImage();
+		if(ev.key === 'MediaTrackPrevious') prevImage();
+	});
+
 
 	return (
 		<div id="hula" onClick={nextImage} onKeyPress={nextImage} role="button" tabIndex={0}>

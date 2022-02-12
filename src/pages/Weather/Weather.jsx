@@ -1,36 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import OpenWeatherAPI from 'openweather-api-node';
 import * as Icon from 'react-bootstrap-icons';
+import Location from '../../components/Location';
 import * as Utility from '../../scripts/utility';
 
 import '../../css/weather.css';
 
+const updateInterval = 900000; // 15 minutes
+const failureTolerance = 5;
+
 export const Weather = props => {
 	const [weather, setWeather] = useState(null);
-	const [location, setLocation] = useState(null);
+	const [failures, setFailures] = useState(0);
 
-	const updateWeather = position => {
+	const updateWeather = location => {
 		if(!process.env.REACT_APP_OPEN_WEATHER_API_KEY) {
 			setWeather(false);
 			return;
 		}
 
-		if(!position && !location) {
-			setLocation(false);
-			setWeather(false);
+		let weatherAPI;
+
+		try {
+			weatherAPI = new OpenWeatherAPI({
+				key: process.env.REACT_APP_OPEN_WEATHER_API_KEY,
+				coordinates: {
+					lat: location?.latitude,
+					lon: location?.longitude
+				},
+				units: "imperial"
+			});
+		}
+		catch(err) {
+			console.error(err);
+
+			if(failures >= failureTolerance - 1) {
+				setWeather(false);
+			}
+			else {
+				setFailures(currentFailures => currentFailures + 1);
+				setTimeout(updateWeather, 1000); // 1 second
+			}
+
 			return;
 		}
-
-		setLocation(position);
-
-		const weatherAPI = new OpenWeatherAPI({
-			key: process.env.REACT_APP_OPEN_WEATHER_API_KEY,
-			coordinates: {
-				lat: position?.coords?.latitude || location?.coords?.latitude,
-				lon: position?.coords?.longitude || location?.coords?.longitude
-			},
-			units: "imperial"
-		})
 
 		weatherAPI.getCurrent()
 			.then(data => {
@@ -39,34 +52,6 @@ export const Weather = props => {
 			.catch(err => {
 				setWeather(false);
 			});
-	};
-
-	const getLocation = () => {
-		if(!navigator.geolocation) {
-			setWeather(false);
-			setLocation(false);
-			return;
-		}
-		
-		navigator.geolocation.getCurrentPosition(updateWeather, err => {
-			setWeather(false);
-			setLocation(false);
-		});
-	}
-
-	const askForLocationPermission = () => {
-		if ( navigator.permissions && navigator.permissions.query) {
-			navigator.permissions.query({ name: 'geolocation' })
-				.then(result => {
-					if ( result.state === 'granted' || result.state === 'prompt' ) {
-						getLocation();
-					}
-				})
-				.catch(err => {});
-		}
-		else if (navigator.geolocation) {
-			getLocation();
-		}
 	};
 
 	const getWeatherIcon = code => {
@@ -115,16 +100,9 @@ export const Weather = props => {
 		return directions[index];
 	};
 
-	useEffect(() => {
-		const interval = setInterval(askForLocationPermission, 1800000); // 30 minutes
-
-		return () => clearInterval(interval);
-	}, []);
-
-	useEffect(askForLocationPermission, []);
-
 	if(weather === null) return (
 		<div id="weather">
+			<Location interval={updateInterval} onUpdate={updateWeather} />
 			<Icon.CloudArrowDown id="weather-icon" />
 			<div id="weather-description">
 				Weather loading...
@@ -132,17 +110,9 @@ export const Weather = props => {
 		</div>
 	);
 
-	if(location === false ) return (
-		<div id="weather">
-			<Icon.PinMap id="weather-icon" />
-			<div id="weather-description">
-				Error getting location
-			</div>
-		</div>
-	);
-
 	if(weather === false) return (
 		<div id="weather">
+			<Location interval={updateInterval} onUpdate={updateWeather} />
 			<Icon.ExclamationDiamond id="weather-icon" />
 			<div id="weather-description">
 				Error loading weather
@@ -152,6 +122,7 @@ export const Weather = props => {
 
 	return (
 		<div id="weather">
+			<Location interval={updateInterval} onUpdate={updateWeather} />
 			<div id="weather-top">
 				{getWeatherIcon(weather.icon.raw)}
 				<div id="weather-main">

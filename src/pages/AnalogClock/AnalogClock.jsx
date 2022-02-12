@@ -12,7 +12,7 @@ export const AnalogClock = props => {
 		const screenHeight = document.getElementsByTagName('body')[0].clientHeight;
 		const screenWidth = document.getElementsByTagName('body')[0].clientWidth;
 
-		return Math.min(containerHeight, containerWidth, screenHeight, screenWidth) * 0.80;
+		return Math.min(containerHeight, containerWidth, screenHeight, screenWidth);
 	};
 
 	const updateTime = () => {

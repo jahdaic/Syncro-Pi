@@ -5,6 +5,7 @@ import reportWebVitals from './scripts/reportWebVitals';
 import Router from './Router';
 
 import './css/style.css';
+import './css/themes.css';
 
 ReactDOM.render(
 	<React.StrictMode>

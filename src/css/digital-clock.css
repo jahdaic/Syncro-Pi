@@ -1,13 +1,14 @@
+#digital-clock {
+}
 
 #digital-clock-day {
 	display: flex;
-	width: 100%;
 	justify-content: space-between;
 }
 
 #digital-clock-day > span {
-	font-size: 0.60em;
-	opacity: 25%;
+	font-size: 0.75em;
+	opacity: 8%;
 }
 
 #digital-clock-day > span.current {
@@ -15,9 +16,10 @@
 }
 
 #digital-clock-time {
-	font-size: 2.5em;
+	font-size: 2.8em;
 	text-align: center;
 	margin: 0.5em 0;
+	white-space: nowrap;
 }
 
 #digital-clock-date {

@@ -26,10 +26,30 @@ export const DigitalClock = props => {
 				<span className={time.getDay() === 5 ? 'current' : ''}>Fri</span>
 				<span className={time.getDay() === 6 ? 'current' : ''}>Sat</span>
 			</div>
-			<div id="digital-clock-time">
+			<div
+				id="digital-clock-time"
+				unlit={
+					Intl
+						.DateTimeFormat('en-US', {timeStyle: 'short'})
+						.format(time)
+						.split('')
+						.map(s => [':', ' '].includes(s) ? s : 'ᛤ')
+						.join('')
+				}
+			>
 				{Intl.DateTimeFormat('en-US', {timeStyle: 'short'}).format(time)}
 			</div>
-			<div id="digital-clock-date">
+			<div
+				id="digital-clock-date"
+				unlit={
+					Intl
+						.DateTimeFormat('en-US', {dateStyle: 'long'})
+						.format(time)
+						.split('')
+						.map(s => 'ᛤ')
+						.join('')
+				}
+			>
 				{Intl.DateTimeFormat('en-US', {dateStyle: 'long'}).format(time)}
 			</div>
 		</div>

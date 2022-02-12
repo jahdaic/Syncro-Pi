@@ -1,74 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-bootstrap-icons';
+import Location from '../../components/Location';
 
 import '../../css/compass.css';
 
 export const Compass = props => {
-	const [position, setPosition] = useState(null);
+	const [location, setLocation] = useState(null);
 
 	const getCompassSize = () => {
-		const containerHeight = document.getElementById('content')?.clientHeight;
-		const containerWidth = document.getElementById('content')?.clientWidth;
-		const screenHeight = document.getElementsByTagName('body')[0].clientHeight;
-		const screenWidth = document.getElementsByTagName('body')[0].clientWidth;
+		const coordinateHeight = document.getElementById('compass-coordinates')?.clientHeight;
+		const positionHeight = document.getElementById('compass-positioning')?.clientHeight;
+		const topHeight = document.getElementById('top')?.clientHeight;
+		const bottomHeight = document.getElementById('bottom')?.clientHeight;
+		const contentHeight = document.getElementById('content')?.clientHeight;
+		const contentWidth = document.getElementById('content')?.clientWidth;
 
-		return Math.min(containerHeight, containerWidth, screenHeight, screenWidth) * 0.8;
+		return Math.min(
+			contentHeight - topHeight - bottomHeight - positionHeight - coordinateHeight,
+			contentWidth,
+		);
 	};
 
-	const getDisplayLatitude = () => `${Math.abs(position?.latitude).toFixed(3)}° ${position?.latitude >= 0 ? 'N' : 'S'}`;
+	const getDisplayLatitude = () => `${Math.abs(location?.latitude).toFixed(3)}° ${location?.latitude >= 0 ? 'N' : 'S'}`;
 
 	const getDisplayLongitude = () =>
-		`${Math.abs(position?.longitude).toFixed(3)}° ${position?.longitude >= 0 ? 'E' : 'W'}`;
+		`${Math.abs(location?.longitude).toFixed(3)}° ${location?.longitude >= 0 ? 'E' : 'W'}`;
 
-	const updatePosition = () => {
-		if(!navigator.geolocation) return;
-		
-		navigator.geolocation.getCurrentPosition(location => {
-			const {heading, latitude, longitude, altitude, speed, accuracy, altitudeAccuracy} = location.coords;
-
-			setPosition(prev => ({
-				...(prev || {}),
-				// heading: (prev?.heading || 0) + Math.random() * (15 + 15) - 15,
-				tilt: (prev?.tilt || 0) + Math.random() * (3 + 3) - 3,
-				climb: (prev?.climb || 0) + Math.random() * (3 + 3) - 3,
-
-				heading, latitude, longitude, altitude, speed, accuracy, altitudeAccuracy
-			}));
-		}, err => {
-			console.error(err);
-			setPosition(-1);
-		}, {enableHighAccuracy: true});
-	};
-
-	const askForLocationPermission = () => {
-		// updatePosition();
-		if ( navigator.permissions && navigator.permissions.query) {
-			navigator.permissions.query({ name: 'geolocation' })
-				.then(result => {
-					if ( result.state === 'granted' || result.state === 'prompt' ) {
-						updatePosition();
-					}
-				})
-				.catch(err => {
-					console.log(err);
-					setPosition(-1);
-				});
-		}
-		else if (navigator.geolocation) {
-			updatePosition();
-		}
-	};
-
-	useEffect(() => {
-		const interval = setInterval(askForLocationPermission, 1000); // 1 second
-
-		return () => clearInterval(interval);
-	}, []);
-
-	useEffect(askForLocationPermission, []);
-
-	if(position === null) return (
+	if(location === null) return (
 		<div id="weather">
+			<Location onUpdate={setLocation} />
 			<Icon.Compass id="weather-icon" />
 			<div id="weather-description">
 				Compass loading...
@@ -76,7 +36,7 @@ export const Compass = props => {
 		</div>
 	);
 
-	if(position === -1) return (
+	if(location === -1) return (
 		<div id="weather">
 			<Icon.PinMap id="weather-icon" />
 			<div id="weather-description">
@@ -87,19 +47,20 @@ export const Compass = props => {
 
 	return (
 		<div id="compass">
+			<Location onUpdate={setLocation} />
 			<div id="compass-coordinates">
 				<span id="compass-coordinates-latitude">{getDisplayLatitude()}</span>
 				<span id="compass-coordinates-longitude">{getDisplayLongitude()}</span>
 			</div>
 			<div id="compass-compass" style={{height: getCompassSize(), width: getCompassSize()}}>
-				<div id="compass-directions" style={{transform: `rotate(${position?.heading || 0}deg)`}} />
-				<div id="compass-tilt" style={{transform: `rotate(${position?.tilt || 0}deg)`}} />
-				<div id="compass-tilt-value">{`${Math.round(position?.tilt || 0)}°`}</div>
-				<div id="compass-climb" style={{backgroundPositionY: `${-(position?.climb || 0) * 79 / 45 + 50}%`}} />
+				<div id="compass-directions" style={{transform: `rotate(${location?.heading || 0}deg)`}} />
+				<div id="compass-tilt" style={{transform: `rotate(${location?.tilt || 0}deg)`}} />
+				<div id="compass-tilt-value">{`${Math.round(location?.tilt || 0)}°`}</div>
+				<div id="compass-climb" style={{backgroundPositionY: `${-(location?.climb || 0) * 79 / 45 + 50}%`}} />
 			</div>
 			<div id="compass-positioning">
-				<div id="compass-altitude">{`${Math.round((position?.altitude || 0) * 3.28084)} ft`}</div>
-				<div id="compass-speed">{`${Math.round((position.speed || 0) * 3.28084)} mph`}</div>
+				<div id="compass-altitude">{`${Math.floor(location?.altitude || 0)} ft`}</div>
+				<div id="compass-speed">{`${Math.floor(location?.speed || 0)} mph`}</div>
 			</div>
 		</div>
 	);

@@ -9,8 +9,8 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 	const location = useLocation();
 	const [lastUpdate, setLastUpdated] = useState(null);
 	const [view, setView] = useState(location.pathname.split('/')[1] || 'analog-clock');
-	const views = ['analog-clock', 'digital-clock', 'compass', 'weather', 'performance', 'spotify', 'hula'];
-	const colors = ['white', 'dark', 'lcd', 'red', 'green'];
+	const views = ['analog-clock', 'digital-clock', 'compass', 'weather', 'performance', 'spotify', 'hula', ]; // 'test'
+	const colors = ['base', 'dark', 'red', 'green', 'white', 'lcd', 'lcd-red', 'lcd-blue'];
 
 	const prevView = () => {
 		setView(currentView => {
@@ -18,6 +18,7 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 			const newView = currentIndex === 0 ? views[views.length - 1] : views[currentIndex - 1];
 	
 			navigate(newView);
+			localStorage.setItem('page', newView);
 			setLastUpdated(Date.now());
 			return newView;
 		});
@@ -27,10 +28,9 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 		setView(currentView => {
 			const currentIndex = views.indexOf(currentView);
 			const newView = currentIndex === views.length - 1 ? views[0] : views[currentIndex + 1];
-	
-			console.log('Next View', prevView, newView, currentIndex)
-	
+		
 			navigate(newView);
+			localStorage.setItem('page', newView);
 			setLastUpdated(Date.now());
 			return newView;
 		});
@@ -49,17 +49,25 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 
 	};
 
+	const viewSettings = () => {
+		navigate('settings');
+	};
+
 	useHotkeys('left', prevView);
 	useHotkeys('right', nextView);
 	useHotkeys('c', nextColor);
 
+	if(location.pathname.includes('settings')) {
+		return null;
+	}
+	
 	return (
 		<div id="bottom">
 			<div onClick={prevView} onKeyPress={prevView} role="button" tabIndex={0}>
 				<Icon.CaretLeftFill />
 			</div>
-			<div onClick={nextColor} onKeyPress={nextColor} role="button" tabIndex={0}>
-				<Icon.LightbulbFill />
+			<div onClick={viewSettings} onKeyPress={viewSettings} role="button" tabIndex={0}>
+				<Icon.GearFill />
 			</div>
 			<div onClick={nextView} onKeyPress={nextView} role="button" tabIndex={0}>
 				<Icon.CaretRightFill />

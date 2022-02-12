@@ -1,19 +1,30 @@
 #performance {
-	width: 90%;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#performance hr {
+	width: 100%;
+	border: none;
+	border-top: 2px solid rgb(var(--text-color));
 }
 
 #performance-speed {
 	font-size: 4em;
 	text-align: center;
+	margin-bottom: -0.2em;
 }
 
 #performance-stats {
+	width: 100%;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	border-top: 2px solid rgb(var(--text-color));
-	padding-top: 1em;
 }
 
 #performance-stats > * {
@@ -22,24 +33,16 @@
 	flex-direction: column;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	text-align: left;
-	/* margin-top: 0.5em; */
+	text-align: center;
 }
 
 #performance-timer {
-	font-size: 1.5em;
+	font-size: 2em;
 	text-align: center;
-	border-top: 2px solid rgb(var(--text-color));
-	margin: 0.5em 0 0.25em 0;
-	padding-top: 0.5em;
 }
 
 #performance-buttons {
 	width: 100%;
 	display: flex;
 	justify-content: space-around;
-}
-
-#performance-buttons button {
-	
 }

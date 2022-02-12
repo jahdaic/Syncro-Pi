@@ -1,0 +1,164 @@
+/* BASE THEME */
+
+#container:before {
+	content: ' ';
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	z-index: 100;
+	display: block;
+	background-color: rgba(var(--theme-color));
+	mix-blend-mode: multiply;
+	pointer-events: none;
+}
+
+/* DARK THEME */
+
+#container.filter-dark {
+	--theme-color: 255, 255, 255, 0.5;
+}
+
+#container.filter-dark:before {
+	background-color: rgb(var(--bg-color));
+	mix-blend-mode: unset;
+	opacity: 50%;
+}
+
+/* RED THEME */
+
+#container.filter-red {
+	--theme-color: 255, 0, 0, 1;
+}
+
+/* GREEN THEME */
+
+#container.filter-green {
+	--theme-color: 99, 145, 15, 1;
+}
+
+/* WHITE THEME */
+
+#container.filter-white:before {
+	background-color: rgb(var(--text-color));
+	mix-blend-mode: difference;
+}
+
+#container.filter-white #hula-image {
+	filter: grayscale() invert();
+}
+
+#container.filter-white .react-clock__second-hand__body {
+	filter: invert();
+}
+
+/* BASE LCD THEME */
+
+#container[class*=filter-lcd] {
+	--bg-color: 255, 255, 255;
+	--text-color: 37, 36, 33;
+	--lcd-shadow: 2px 2px 2px rgba(0, 0, 0, 0.20);
+	box-shadow: inset 10px 10px 15px rgba(0, 0, 0, 0.40);
+	--theme-color: 152, 156, 127, 1;
+}
+
+#container[class*=filter-lcd]:before {
+	background-color: #989c7f;
+}
+
+#container[class*=filter-lcd]:after {
+	content: ' ';
+	position: absolute;
+	display: block;
+	height: 100%;
+	width: 100%;
+	background-color: #ffffff;
+	z-index: -100;
+}
+
+#container[class*=filter-lcd] * {
+	font-family: 'LCD', 'Courier New', Courier, monospace;
+	text-shadow: var(--lcd-shadow);
+	text-transform: uppercase;
+}
+
+#container[class*=filter-lcd] hr {
+	box-shadow: var(--lcd-shadow);
+}
+
+#container[class*=filter-lcd] svg, #container[class*=filter-lcd] .react-clock {
+	filter: drop-shadow(var(--lcd-shadow));
+}
+
+#container[class*=filter-lcd] .react-clock__second-hand__body {
+	background-color: rgb(var(--text-color));
+}
+
+#container[class*=filter-lcd] #compass-compass {
+	filter: drop-shadow(var(--lcd-shadow));
+}
+
+#container[class*=filter-lcd] #compass-directions, #container[class*=filter-lcd] #compass-tilt, #container[class*=filter-lcd] #compass-climb {
+	filter: invert(1);
+}
+
+[class*=filter-lcd] #digital-clock-time:before {
+	content: attr(unlit);
+	opacity: 8%;
+	position: absolute;
+}
+
+[class*=filter-lcd] #digital-clock-date:before {
+	content: attr(unlit);
+	opacity: 8%;
+	position: absolute;
+}
+
+#container[class*=filter-lcd] button {
+	position: relative;
+	background-color: #797C65;
+	/* font-size: 0.85em; */
+	font-family: var(--font);
+	color: transparent;
+	text-shadow: 2px 2px 1px rgb(255, 255, 255);
+	box-shadow: var(--lcd-shadow);
+	background-clip: text;
+}
+
+#container[class*=filter-lcd] button:before {
+	content: '';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgb(var(--text-color));
+	border-radius: 1em;
+	z-index: -1;
+}
+
+/* RED LCD THEME */
+
+#container.filter-lcd-red {
+	--theme-color: 0, 0, 0, 1;
+	box-shadow: none;
+	
+}
+
+#container.filter-lcd-red:before {
+	background-color: #c01a1a;
+	box-shadow: inset 0px 0px 10px 10px rgb(230, 0, 0);
+}
+
+/* BLUE LCD THEME */
+
+#container.filter-lcd-blue {
+	--theme-color: 0, 0, 0, 1;
+	box-shadow: none;
+}
+
+#container.filter-lcd-blue:before {
+	background-color: #0041cc;
+	box-shadow: inset 0px 0px 10px 10px rgb(0, 79, 250);
+}
+

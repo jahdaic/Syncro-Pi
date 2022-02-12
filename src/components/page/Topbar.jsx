@@ -15,7 +15,7 @@ export const TopBar = props => {
 	}, []);
 
 	if(location.pathname.includes('digital-clock')) {
-		return <div id="top">&nbsp;</div>;
+		return null;
 	}
 
 	return (

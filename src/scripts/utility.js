@@ -34,3 +34,34 @@ export const ratioToPercent = (part, total) => part >= total ? 100 : part / tota
  * @returns {Number}
  */
 export const mpsToMPH = (mps) => mps * 2.236936;
+
+/**
+ * Converts a distance from meters to feet
+ * @param {Number} m - The distance to convert in meters 
+ * @returns {Number}
+ */
+export const metersToFeet = (m) => m * 3.28084;
+
+export const randomString = (length) => {
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+	let str = '';
+	for (let i = 0; i < length; i++) {
+		str += chars.charAt(Math.floor(Math.random() * chars.length));
+	}
+
+	return str;
+};
+
+export const hashString = async (str) => {
+	const encoder = new TextEncoder();
+	const data = encoder.encode(str);
+	const hash = await crypto.subtle.digest('SHA-256', data);
+	return hash;
+};
+
+export const base64URLEncode = (str) => 
+	btoa(String.fromCharCode.apply(null, new Uint8Array(str)))
+		.replace(/\+/g, '-')
+		.replace(/\//g, '_')
+		.replace(/=+$/, '');
