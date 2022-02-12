@@ -4,7 +4,7 @@ import * as Utility from '../scripts/utility';
 const failureTolerance = 5;
 
 export const Location = ({interval = 1000, onUpdate, ...props}) => {
-	const [method, setMethod] = useState('gpsd');
+	const [method, setMethod] = useState(process.env.REACT_APP_GPSD_SERVER_URL ? 'gpsd' : 'geolocation');
 	const [failures, setFailures] = useState(0);
 
 	const dataFailure = err => {
@@ -50,7 +50,7 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 	});
 
 	const getDataFromGPSD = () => {
-		fetch('http://192.168.50.22:8080')
+		fetch(process.env.REACT_APP_GPSD_SERVER_URL)
 			.then(response => response.json())
 			.then(cleanupGPSData)
 			.then(onUpdate)
