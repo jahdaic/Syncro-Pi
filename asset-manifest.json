@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Syncro-Pi/static/css/main.b7ceba98.css",
-    "main.js": "/Syncro-Pi/static/js/main.5d36adc8.js",
+    "main.js": "/Syncro-Pi/static/js/main.9f13e3dc.js",
     "static/js/787.3de7e60d.chunk.js": "/Syncro-Pi/static/js/787.3de7e60d.chunk.js",
     "static/media/hula-girl.gif": "/Syncro-Pi/static/media/hula-girl.eb10a9c3371511f1f00e.gif",
     "static/media/stitch.gif": "/Syncro-Pi/static/media/stitch.d7609eb18a354223630c.gif",
@@ -12,11 +12,11 @@
     "index.html": "/Syncro-Pi/index.html",
     "static/media/tilt.svg": "/Syncro-Pi/static/media/tilt.eb182c8b880c21e7d8ba.svg",
     "main.b7ceba98.css.map": "/Syncro-Pi/static/css/main.b7ceba98.css.map",
-    "main.5d36adc8.js.map": "/Syncro-Pi/static/js/main.5d36adc8.js.map",
+    "main.9f13e3dc.js.map": "/Syncro-Pi/static/js/main.9f13e3dc.js.map",
     "787.3de7e60d.chunk.js.map": "/Syncro-Pi/static/js/787.3de7e60d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b7ceba98.css",
-    "static/js/main.5d36adc8.js"
+    "static/js/main.9f13e3dc.js"
   ]
 }
