@@ -10,7 +10,13 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-    flex-grow: 1;
+	flex-grow: 1;
+}
+
+#settings-options label.disabled {
+	opacity: 25%;
+	pointer-events: none;
+	cursor: not-allowed;
 }
 
 #settings-theme {

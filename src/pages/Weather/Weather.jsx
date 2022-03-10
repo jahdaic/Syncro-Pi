@@ -19,6 +19,8 @@ export const Weather = props => {
 			return;
 		}
 
+		if(!location.latitude || !location.longitude) return;
+
 		let weatherAPI;
 
 		try {
@@ -126,27 +128,60 @@ export const Weather = props => {
 			<div id="weather-top">
 				{getWeatherIcon(weather.icon.raw)}
 				<div id="weather-main">
-					<div id="weather-temp">
+					<div
+						id="weather-temp"
+						className="show-unlit"
+						unlit={Utility.generateUnlitLCD(`${Number(weather?.temp.cur).toFixed(0)}°`)}
+					>
 						{`${Number(weather?.temp.cur).toFixed(0)}°`}
 					</div>
-					<div id="weather-feels">
-						Feels {`${Number(weather?.feels_like.cur).toFixed(0)}°`}
+					<div
+						id="weather-feels"
+						className="show-unlit"
+						unlit={Utility.generateUnlitLCD(`Feels ${Number(weather?.feels_like.cur).toFixed(0)}°`)}
+					>
+						 {`Feels ${Number(weather?.feels_like.cur).toFixed(0)}°`}
 					</div>
 				</div>
 			</div>
-			<div id="weather-description">{Utility.toTitleCase(weather?.description)}</div>
+
+			<div
+				id="weather-description"
+				className="show-unlit"
+				unlit={Utility.generateUnlitLCD(Utility.toTitleCase(weather?.description))}
+			>
+				{Utility.toTitleCase(weather?.description)}
+			</div>
+
 			<div id="weather-bottom">
 				<div id="weather-rain">
 					<Icon.UmbrellaFill />
-					{`${weather?.rain}"`}
+
+					<span className="show-unlit" unlit={Utility.generateUnlitLCD(`${weather?.rain}"`)}>
+						{`${weather?.rain}"`}
+					</span>
 				</div>
+
 				<div id="weather-wind">
 					<Icon.Wind />
-					{`${Number(weather?.wind.speed).toFixed(0)} ${degreesToCompass(weather?.wind.deg)}`}
+
+					<span className="show-unlit"
+						unlit={Utility.generateUnlitLCD(
+							`${Math.round(weather?.wind.speed)} ${degreesToCompass(weather?.wind.deg)}`
+						)}>
+						{`${Math.round(weather?.wind.speed)} ${degreesToCompass(weather?.wind.deg)}`}
+					</span>
 				</div>
+
 				<div id="weather-uv">
 					<Icon.SunFill />
-					{Math.round(weather?.uvi || 0)}
+					
+					<span
+						className="show-unlit"
+						unlit={Utility.generateUnlitLCD(String(Math.round(weather?.uvi || 0)))}
+					>
+						{Math.round(weather?.uvi || 0)}
+					</span>
 				</div>
 			</div>
 		</div>

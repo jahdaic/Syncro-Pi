@@ -15,8 +15,8 @@
 }
 
 #spotify-album {
-	height: 23.5vh;
-	width: 23.5vh;
+	height: 5.2em;
+	width: 5.2em;
 	aspect-ratio: 1 / 1;
 	border: 1px solid currentColor;
 	background-size: contain;

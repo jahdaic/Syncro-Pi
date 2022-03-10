@@ -28,7 +28,7 @@
 	background-repeat: no-repeat;
 	transition-property: transform;
 	transition-timing-function: linear;
-	transition-duration: 1s;
+	transition-duration: 0.5s;
 	transition-delay: 0s;
 }
 
@@ -41,7 +41,7 @@
 	background-repeat: no-repeat;
 	transition-property: transform;
 	transition-timing-function: linear;
-	transition-duration: 1s;
+	transition-duration: 0.5s;
 	transition-delay: 0s;
 }
 
@@ -63,7 +63,7 @@
 	background-repeat: no-repeat;
 	transition-property: background-position-y;
 	transition-timing-function: linear;
-	transition-duration: 1s;
+	transition-duration: 0.5s;
 	transition-delay: 0s;
 	clip-path: circle(33% at center);
 }

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as Icon from 'react-bootstrap-icons';
@@ -9,14 +9,26 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 	const location = useLocation();
 	const [lastUpdate, setLastUpdated] = useState(null);
 	const [view, setView] = useState(location.pathname.split('/')[1] || 'analog-clock');
-	const views = ['analog-clock', 'digital-clock', 'compass', 'weather', 'performance', 'spotify', 'hula', ]; // 'test'
-	const colors = ['base', 'dark', 'red', 'green', 'white', 'lcd', 'lcd-red', 'lcd-blue'];
+	const views = [
+		'analog-clock',
+		'digital-clock',
+		'speed',
+		'compass',
+		'weather',
+		'performance',
+		'spotify',
+		'hula',
+		// 'test',
+	];
+	const colors = ['base', 'dark', 'red', 'green', 'white', 'lcd', 'lcd-black', 'lcd-red', 'lcd-blue'];
 
-	const prevView = () => {
-		setView(currentView => {
+	const prevView = (ev) => {
+		ev.preventDefault();
+
+		setView((currentView) => {
 			const currentIndex = views.indexOf(currentView);
 			const newView = currentIndex === 0 ? views[views.length - 1] : views[currentIndex - 1];
-	
+
 			navigate(newView);
 			localStorage.setItem('page', newView);
 			setLastUpdated(Date.now());
@@ -24,11 +36,13 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 		});
 	};
 
-	const nextView = () => {
-		setView(currentView => {
+	const nextView = (ev) => {
+		ev.preventDefault();
+
+		setView((currentView) => {
 			const currentIndex = views.indexOf(currentView);
 			const newView = currentIndex === views.length - 1 ? views[0] : views[currentIndex + 1];
-		
+
 			navigate(newView);
 			localStorage.setItem('page', newView);
 			setLastUpdated(Date.now());
@@ -36,17 +50,18 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 		});
 	};
 
-	const nextColor = () => {
-		if(typeof onColorChange !== 'function') return;
+	const nextColor = (ev) => {
+		ev.preventDefault();
 
-		onColorChange(currentColor => {
+		if (typeof onColorChange !== 'function') return;
+
+		onColorChange((currentColor) => {
 			const currentIndex = colors.indexOf(currentColor);
 			const newColor = currentIndex === colors.length - 1 ? colors[0] : colors[currentIndex + 1];
-	
-			localStorage.setItem('color', newColor);
+
+			localStorage.setItem('theme', newColor);
 			return newColor;
 		});
-
 	};
 
 	const viewSettings = () => {
@@ -57,10 +72,10 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 	useHotkeys('right', nextView);
 	useHotkeys('c', nextColor);
 
-	if(location.pathname.includes('settings')) {
+	if (location.pathname.includes('settings')) {
 		return null;
 	}
-	
+
 	return (
 		<div id="bottom">
 			<div onClick={prevView} onKeyPress={prevView} role="button" tabIndex={0}>
@@ -74,7 +89,7 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 			</div>
 		</div>
 	);
-}
+};
 
 BottomBar.propTypes = {
 	color: PropTypes.string,

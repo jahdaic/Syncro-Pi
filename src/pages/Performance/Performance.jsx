@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-bootstrap-icons';
 import Location from '../../components/Location';
+import * as Utility from '../../scripts/utility';
 
 import '../../css/performance.css';
 
@@ -76,18 +77,26 @@ export const Performance = props => {
 	return (
 		<div id="performance">
 			<Location onUpdate={location => setSpeed(location?.speed)} />
-			<div id="performance-speed">
+			<div id="performance-speed" className="show-unlit" unlit={Utility.generateUnlitLCD(getCurrentSpeed())}>
 				{getCurrentSpeed()}
 			</div>
 			<hr />
 			<div id="performance-stats">
 				<div>
-					<span>{getTopSpeed()} mph</span>
-					<span>Top Spd</span>
+					<span className="show-unlit" unlit={Utility.generateUnlitLCD(`${getTopSpeed()} mph`)}>
+						{getTopSpeed()} mph
+					</span>
+					<span className="show-unlit" unlit={Utility.generateUnlitLCD('Top Spd')}>
+						Top Spd
+					</span>
 				</div>
 				<div>
-					<span>{getAcceleration()}</span>
-					<span>00 - 60 </span>
+					<span className="show-unlit" unlit={Utility.generateUnlitLCD(getAcceleration())}>
+						{getAcceleration()}
+					</span>
+					<span className="show-unlit" unlit={Utility.generateUnlitLCD('00 - 60')}>
+						00 - 60
+					</span>
 				</div>
 				{/* <div>
 					<span>1.2 G</span>
@@ -99,7 +108,7 @@ export const Performance = props => {
 				</div> */}
 			</div>
 			<hr />
-			<div id="performance-timer">
+			<div id="performance-timer" className="show-unlit" unlit={Utility.generateUnlitLCD(getDisplayTime(), [':'])}>
 				{getDisplayTime()}
 			</div>
 			<div id="performance-buttons">

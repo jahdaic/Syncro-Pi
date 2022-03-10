@@ -1,88 +1,209 @@
-import React, {  useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import PropTypes from 'prop-types';
+import Select from 'react-select';
+import * as Utility from '../../scripts/utility';
 
 import '../../css/settings.css';
 
-export const Settings = ({onColorChange, ...props}) => {
+const themes = [
+	{ value: 'base', label: 'White' },
+	{ value: 'dark', label: 'Dim White' },
+	{ value: 'red', label: 'Red' },
+	{ value: 'green', label: 'Green' },
+	{ value: 'white', label: 'Inverse' },
+	{ value: 'lcd', label: 'LCD' },
+	{ value: 'lcd-black', label: 'Inverse LCD' },
+	{ value: 'lcd-red', label: 'Red LCD' },
+	{ value: 'lcd-blue', label: 'Blue LCD' },
+];
+
+const units = [
+	{ value: 'imperial', label: 'Imperial' },
+	{ value: 'metric', label: 'Metric' },
+];
+
+const timeFormats = [
+	{ value: '12', label: '12-Hour' },
+	{ value: '24', label: '24-Hour' },
+];
+
+const dateFormats = [
+	{ value: 'long', label: 'Long' },
+	{ value: 'short-imperial', label: 'Short' },
+];
+
+const dropdownStyle = {
+	control: (provided, state) => ({
+		...provided,
+		backgroundColor: 'rgb(var(--text-color))',
+		padding: '0.5em',
+		border: 'none',
+		borderRadius: '10px'
+	}),
+	singleValue: (provided, state) => ({
+		...provided,
+		color: 'rgb(var(--bg-color))',
+	}),
+	dropdownIndicator: (provided, state) => ({
+		...provided,
+		svg: {
+			fill: 'rgb(var(--bg-color)) !important',
+			height: '1em',
+			width: '1em',
+			paddingLeft: '0.5em',	
+		}
+	}),
+	menu: (provided, state) => ({
+		...provided,
+		backgroundColor: 'rgb(var(--text-color))',
+		padding: '0.5em',
+		border: '1px solid rgb(var(--bg-color))',
+		borderRadius: '10px',
+	}),
+	menuList: (provided, state) => ({
+		...provided,
+		color: 'rgb(var(--bg-color))',
+	}),
+	option: (provided, state) => ({
+		...provided,
+		color: state.isFocused ? 'rgb(var(--text-color))' : 'rgb(var(--bg-color))',
+		backgroundColor: state.isFocused ? 'rgb(var(--bg-color))' : 'transparent',
+		padding: '0.5em 0',
+		borderRadius: '10px',
+	}),
+};
+
+export const Settings = ({onThemeChange, ...props}) => {
 	const navigate = useNavigate();
-	const [theme, setTheme] = useState(localStorage.getItem('color') || 'base');
-	const [units, setUnits] = useState(localStorage.getItem('units') || 'imperial');
-	const [timeFormat, setTimeFormat] = useState(localStorage.getItem('time-format') || '12');
-	const [dateFormat, setDateFormat] = useState(localStorage.getItem('date-format') || 'long');
+	const [theme, setTheme] = useState('lcd');
+	const [unit, setUnit] = useState('imperial');
+	const [timeFormat, setTimeFormat] = useState('12');
+	const [dateFormat, setDateFormat] = useState('long');
 
 	const saveSettings = () => {
-		onColorChange(theme);
+		onThemeChange(theme.value);
 
-		localStorage.setItem('color', theme);
-		localStorage.setItem('units', units);
-		localStorage.setItem('time-format', timeFormat);
-		localStorage.setItem('date-format', dateFormat);
+		localStorage.setItem('theme', theme.value);
+		localStorage.setItem('units', unit.value);
+		localStorage.setItem('time-format', timeFormat.value);
+		localStorage.setItem('date-format', dateFormat.value);
 
-		navigate(`/${localStorage.getItem('page')}`);
+		navigate(`/${localStorage.getItem('page') || ''}`);
 	};
 
-	const cancelSettings = () => {
-		navigate(`/${localStorage.getItem('page')}`);
-	};
+	useEffect(() => {
+		if(localStorage.getItem('theme'))
+			setTheme(themes.find(x => x.value === localStorage.getItem('theme')));
+		
+		if(localStorage.getItem('units'))
+			setUnit(units.find(x => x.value === localStorage.getItem('units')));
+		
+		if(localStorage.getItem('time-format'))
+			setTimeFormat(timeFormats.find(x => x.value === localStorage.getItem('time-format')));
+
+		if(localStorage.getItem('date-format'))
+			setDateFormat(dateFormats.find(x => x.value === localStorage.getItem('date-format')));
+	}, []);
 
 	return (
 		<div id="settings">
 			<div id="settings-options">
-				{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-				<label>
+				<span>
+					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+					<label
+						htmlFor="settings-theme"
+						className="show-unlit"
+						unlit={Utility.generateUnlitLCD('Theme', [], 16)}
+					>
 					Theme
-					<select id="settings-theme" value={theme} onChange={ev => setTheme(ev.target.value)}>
-						<option value="base">Base</option>
-						<option value="dark">Dark</option>
-						<option value="red">Red</option>
-						<option value="green">Green</option>
-						<option value="white">White</option>
-						<option value="lcd">LCD</option>
-						<option value="lcd-red">Red LCD</option>
-						<option value="lcd-blue">Blue LCD</option>
-					</select>
-				</label>
+					</label>
+					<Select
+						id="settings-theme"
+						className="select"
+						value={theme}
+						onChange={opt => {onThemeChange(opt.value); setTheme(opt);}}
+						options={themes}
+						styles={dropdownStyle}
+						isSearchable={false}
+					/>
+				</span>
 
-				{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-				<label>
+				<span className="disabled">
+					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+					<label
+						htmlFor="settings-unit"
+						className="show-unlit"
+						unlit={Utility.generateUnlitLCD('Units', [], 16)}
+					>
 					Units
-					<select id="settings-theme" value={units} onChange={ev => setUnits(ev.target.value)}>
-						<option value="imperial">Imperial</option>
-						<option value="metric">Metric</option>
-					</select>
-				</label>
+					</label>
+					<Select
+						id="settings-unit"
+						className="select"
+						value={unit}
+						onChange={opt => setUnit(opt)}
+						options={units}
+						styles={dropdownStyle}
+						isSearchable={false}
+					/>
+				</span>
 
-				{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-				<label>
+				<span>
+					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+					<label
+						htmlFor="settings-time-format"
+						className="show-unlit"
+						unlit={Utility.generateUnlitLCD('Time Format', [], 16)}
+					>
 					Time Format
-					<select id="settings-theme" value={timeFormat} onChange={ev => setTimeFormat(ev.target.value)}>
-						<option value="12">12-Hour</option>
-						<option value="24">24-Hour</option>
-					</select>
-				</label>
+					</label>
+					<Select
+						id="settings-time-format"
+						className="select"
+						value={timeFormat}
+						onChange={opt => setTimeFormat(opt)}
+						options={timeFormats}
+						styles={dropdownStyle}
+						isSearchable={false}
+					/>
+				</span>
 
-				{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-				<label>
-					Date Format
-					<select id="settings-theme" value={dateFormat} onChange={ev => setDateFormat(ev.target.value)}>
-						<option value="long">Long Format</option>
-						<option value="short-imperial">Short Format m/d/y</option>
-						<option value="short-metric">Short Format d/m/y</option>
-					</select>
-				</label>
+				<span>
+					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+					<label
+						htmlFor="settings-date-format"
+						className="show-unlit"
+						unlit={Utility.generateUnlitLCD('Date Format', [], 16)}
+					>
+						Date Format
+					</label>
+					<Select
+						id="settings-date-format"
+						className="select"
+						value={dateFormat}
+						onChange={opt => setDateFormat(opt)}
+						options={dateFormats}
+						styles={dropdownStyle}
+						isSearchable={false}
+					/>
+				</span>
 			</div>
 
 			<div id="settings-buttons">
-				<button type="button" onClick={saveSettings}>
+				<button type="button" onClick={saveSettings} style={{width: '50%'}}>
 					Save
-				</button>
-				<button type="button" onClick={cancelSettings}>
-					Back
 				</button>
 			</div>
 		</div>
 	);
 }
+
+Settings.propTypes = {
+	onThemeChange: PropTypes.func.isRequired,
+};
+
+Settings.defaultProps = {
+};
 
 export default Settings;

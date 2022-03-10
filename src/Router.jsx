@@ -6,6 +6,7 @@ import BottomBar from './components/page/BottomBar';
 
 import AnalogClock from './pages/AnalogClock';
 import DigitalClock from './pages/DigitalClock';
+import Speed from './pages/Speed';
 import Compass from './pages/Compass';
 import Weather from './pages/Weather';
 import Performance from './pages/Performance';
@@ -16,7 +17,7 @@ import Test from './pages/Test';
 
 export const Router = props => {
 	const navigate = useNavigate();
-	const [color, setColor] = useState(localStorage.getItem('color') || 'base');
+	const [theme, setTheme] = useState(localStorage.getItem('theme') || 'lcd');
 
 	// Return to last page
 	useEffect(() => {
@@ -25,7 +26,7 @@ export const Router = props => {
 	}, []);
 
 	return (
-		<Container filter={color}>
+		<Container filter={theme}>
 			<TopBar />
 
 			<div id="content">
@@ -33,17 +34,18 @@ export const Router = props => {
 					<Route path="/" element={<AnalogClock />} />
 					<Route path="/analog-clock" element={<AnalogClock />} />
 					<Route path="/digital-clock" element={<DigitalClock />} />
+					<Route path="/speed" element={<Speed />} />
 					<Route path="/compass" element={<Compass />} />
 					<Route path="/weather" element={<Weather />} />
 					<Route path="/performance" element={<Performance />} />
 					<Route path="/spotify" element={<Spotify />} />
 					<Route path="/hula" element={<Hula />} />
-					<Route path="/settings" element={<Settings onColorChange={setColor} />} />
+					<Route path="/settings" element={<Settings onThemeChange={setTheme} />} />
 					<Route path="/test" element={<Test />} />
 				</Routes>
 			</div>
 
-			<BottomBar color={color} onColorChange={setColor} />
+			<BottomBar color={theme} onColorChange={setTheme} />
 		</Container>
 	);
 }

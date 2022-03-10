@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import Confirm from './Confirm';
 import * as Utility from '../scripts/utility';
 
-const failureTolerance = 5;
+const failureTolerance = 3;
+const validMethods = ['geolocation'];
+
+if(process.env.REACT_APP_GPSD_SERVER_URL) validMethods.unshift('gpsd');
 
 export const Location = ({interval = 1000, onUpdate, ...props}) => {
-	const [method, setMethod] = useState(process.env.REACT_APP_GPSD_SERVER_URL ? 'gpsd' : 'geolocation');
+	const [method, setMethod] = useState(validMethods[0]);
+	const [failedMethods, setFailedMethods] = useState([]);
+	const [permitted, setPermitted] = useState(false);
+	const [confirmed, setConfirmed] = useState(true);
 	const [failures, setFailures] = useState(0);
 
-	const dataFailure = err => {
-		if(failures >= failureTolerance - 1) {
-			setMethod(currentMethod => {
-				const newMethod = currentMethod === 'gpsd' ? 'geolocation' : 'gpsd';
-				console.log(`Changing location method to ${newMethod}`);
-				return newMethod;
-			});
-			setFailures(0);
-			return;
-		}
+	const dataFailure = (err, forceNext) => {
+		console.log('Failure', method, failures, failureTolerance, forceNext, new Date().toLocaleTimeString());
 
-		setFailures(currentFailures => currentFailures + 1);
-		console.log(`Failed to get location via ${method}`);
-		console.error(err);
+		setFailures(currentFailures => {
+			if(currentFailures >= failureTolerance - 1 || forceNext) {
+				setMethod(currentMethod => {
+					const newMethod = validMethods.find(m => !failedMethods.includes(m) && m !== currentMethod);
+
+					if(!newMethod) return currentMethod;
+
+					console.log(`Changing location method to ${newMethod}`);
+					setFailedMethods(currentFailedMethods => [...currentFailedMethods, currentMethod]);
+					return newMethod;
+				});
+			}
+			else {
+				console.log(`Failed to get location via ${method}`);
+				console.error(err);
+				return currentFailures + 1;
+			}
+
+			return currentFailures;
+		});
 	};
 
 	const cleanupGPSData = response => ({
@@ -50,10 +67,11 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 	});
 
 	const getDataFromGPSD = () => {
-		fetch(process.env.REACT_APP_GPSD_SERVER_URL)
+		fetch(`${process.env.REACT_APP_GPSD_SERVER_URL}/gps`)
 			.then(response => response.json())
 			.then(cleanupGPSData)
 			.then(onUpdate)
+			.then(() => setTimeout(updateLocation, interval, method))
 			.catch(dataFailure);
 	};
 
@@ -62,41 +80,82 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 			navigator.permissions.query({ name: 'geolocation' })
 				.then(permission => {
 					if ( permission.state === 'granted' || permission.state === 'prompt' ) {
+						setPermitted(true);
 						navigator.geolocation.getCurrentPosition(
-							location => onUpdate(cleanupGeolocationData(location)),
+							location => {
+								onUpdate(cleanupGeolocationData(location));
+								setTimeout(updateLocation, interval);
+							},
 							dataFailure,
 							{enableHighAccuracy: true}
 						);
 					}
 					else {
-						dataFailure('Geolocation API permission denied');
+						setConfirmed(false);
+						dataFailure('Geolocation API permission denied by system');
 					}
 				})
-				.catch(dataFailure);
+				.catch(err => {
+					if(!permitted) setConfirmed(false);
+					else dataFailure(err);
+				});
 		}
 		else if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
-				location => onUpdate(cleanupGeolocationData(location)),
+				location => {
+					onUpdate(cleanupGeolocationData(location));
+					setTimeout(updateLocation, interval);
+				},
 				dataFailure,
 				{enableHighAccuracy: true}
 			);
 		}
 	};
 
-	const updateLocation = () => {
-		if(method === 'gpsd') getDataFromGPSD();
-		if(method === 'geolocation') getDataFromGeolocation();
+	const updateLocation = (currentMethod = method) => {
+		if(currentMethod === 'gpsd') getDataFromGPSD();
+		if(currentMethod === 'geolocation') getDataFromGeolocation();
 	};
 
-	useEffect(() => {
-		const loop = setInterval(updateLocation, interval); // 1 second default
+	// useEffect(() => {
+	// 	console.log(`Setting timeout from ${new Date().toLocaleTimeString()} - ${failures}/${method}/${failedMethods}`);
+	// 	setTimeout(() => updateLocation(method), interval)
+	// }, [failures]);
 
-		return () => clearInterval(loop);
-	}, []);
+	useEffect(() => setFailures(0), [method]);
 
-	useEffect(updateLocation, []);
+	useEffect(() => updateLocation(method), []);
+
+	if(method === 'geolocation' && !permitted && !confirmed) return (
+		<Confirm
+			onConfirm={() => {
+				setConfirmed(true);
+				updateLocation();
+			}}
+			onCancel={() => {
+				setConfirmed(true);
+				dataFailure('Geolocation API permission denied by user', true);
+			}}
+		>
+			<span
+				className="show-unlit"
+				unlit={Utility.fillUnlitLCD(3, 20)}
+			>
+				You must grant permission to access GPS.
+			</span>
+		</Confirm>);
 
 	return null;
 }
+
+Location.propTypes = {
+	interval: PropTypes.number,
+	onUpdate: PropTypes.func.isRequired,
+};
+
+Location.defaultProps = {
+	interval: 1000,
+};
+
 
 export default Location;

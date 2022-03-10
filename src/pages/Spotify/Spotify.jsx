@@ -262,14 +262,34 @@ export const Spotify = props => {
 		<div id="spotify">
 			<div id="spotify-song">
 				<div id="spotify-album" style={{backgroundImage: `url(${track?.item?.album?.images[1]?.url})`}} />
-				<div id="spotify-name">{track?.item?.name || 'Unknown Song'}</div>
-				<div id="spotify-artist">{track?.item?.artists[0]?.name || 'Unknown Artist'}</div>
+				<div
+					id="spotify-name"
+					className="show-unlit"
+					unlit={Utility.generateUnlitLCD(track?.item?.name || 'Unknown Song', [':'])}
+				>
+					{track?.item?.name || 'Unknown Song'}
+				</div>
+				<div
+					id="spotify-artist"
+					className="show-unlit"
+					unlit={Utility.generateUnlitLCD(track?.item?.artists[0]?.name || 'Unknown Artist', [':'])}
+				>
+					{track?.item?.artists[0]?.name || 'Unknown Artist'}
+				</div>
 			</div>
 			<div id="spotify-progress">
-				<div id="spotify-progress-current">
+				<div
+					id="spotify-progress-current"
+					className="show-unlit"
+					unlit={Utility.generateUnlitLCD(Utility.msToDuration( getCurrentProgress() ), [':'])}
+				>
 					{ Utility.msToDuration( getCurrentProgress() ) }
 				</div>
-				<div id="spotify-progress-total">
+				<div
+					id="spotify-progress-total"
+					className="show-unlit"
+					unlit={Utility.generateUnlitLCD(Utility.msToDuration( track?.item?.duration_ms ), [':'])}
+				>
 					{ Utility.msToDuration( track?.item?.duration_ms ) }
 				</div>
 				<div
