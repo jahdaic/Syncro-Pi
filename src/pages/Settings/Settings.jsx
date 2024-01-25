@@ -1,4 +1,4 @@
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
@@ -39,7 +39,7 @@ const dropdownStyle = {
 		backgroundColor: 'rgb(var(--text-color))',
 		padding: '0.5em',
 		border: 'none',
-		borderRadius: '10px'
+		borderRadius: '10px',
 	}),
 	singleValue: (provided, state) => ({
 		...provided,
@@ -51,8 +51,8 @@ const dropdownStyle = {
 			fill: 'rgb(var(--bg-color)) !important',
 			height: '1em',
 			width: '1em',
-			paddingLeft: '0.5em',	
-		}
+			paddingLeft: '0.5em',
+		},
 	}),
 	menu: (provided, state) => ({
 		...provided,
@@ -74,7 +74,7 @@ const dropdownStyle = {
 	}),
 };
 
-export const Settings = ({onThemeChange, ...props}) => {
+export const Settings = ({ onThemeChange, ...props }) => {
 	const navigate = useNavigate();
 	const [theme, setTheme] = useState('lcd');
 	const [unit, setUnit] = useState('imperial');
@@ -93,17 +93,15 @@ export const Settings = ({onThemeChange, ...props}) => {
 	};
 
 	useEffect(() => {
-		if(localStorage.getItem('theme'))
-			setTheme(themes.find(x => x.value === localStorage.getItem('theme')));
-		
-		if(localStorage.getItem('units'))
-			setUnit(units.find(x => x.value === localStorage.getItem('units')));
-		
-		if(localStorage.getItem('time-format'))
-			setTimeFormat(timeFormats.find(x => x.value === localStorage.getItem('time-format')));
+		if (localStorage.getItem('theme')) setTheme(themes.find((x) => x.value === localStorage.getItem('theme')));
 
-		if(localStorage.getItem('date-format'))
-			setDateFormat(dateFormats.find(x => x.value === localStorage.getItem('date-format')));
+		if (localStorage.getItem('units')) setUnit(units.find((x) => x.value === localStorage.getItem('units')));
+
+		if (localStorage.getItem('time-format'))
+			setTimeFormat(timeFormats.find((x) => x.value === localStorage.getItem('time-format')));
+
+		if (localStorage.getItem('date-format'))
+			setDateFormat(dateFormats.find((x) => x.value === localStorage.getItem('date-format')));
 	}, []);
 
 	return (
@@ -111,18 +109,17 @@ export const Settings = ({onThemeChange, ...props}) => {
 			<div id="settings-options">
 				<span>
 					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-					<label
-						htmlFor="settings-theme"
-						className="show-unlit"
-						unlit={Utility.generateUnlitLCD('Theme', [], 16)}
-					>
-					Theme
+					<label htmlFor="settings-theme" className="show-unlit" data-unlit={Utility.generateUnlitLCD('Theme', [], 16)}>
+						Theme
 					</label>
 					<Select
 						id="settings-theme"
 						className="select"
 						value={theme}
-						onChange={opt => {onThemeChange(opt.value); setTheme(opt);}}
+						onChange={(opt) => {
+							onThemeChange(opt.value);
+							setTheme(opt);
+						}}
 						options={themes}
 						styles={dropdownStyle}
 						isSearchable={false}
@@ -131,18 +128,14 @@ export const Settings = ({onThemeChange, ...props}) => {
 
 				<span className="disabled">
 					{/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-					<label
-						htmlFor="settings-unit"
-						className="show-unlit"
-						unlit={Utility.generateUnlitLCD('Units', [], 16)}
-					>
-					Units
+					<label htmlFor="settings-unit" className="show-unlit" data-unlit={Utility.generateUnlitLCD('Units', [], 16)}>
+						Units
 					</label>
 					<Select
 						id="settings-unit"
 						className="select"
 						value={unit}
-						onChange={opt => setUnit(opt)}
+						onChange={(opt) => setUnit(opt)}
 						options={units}
 						styles={dropdownStyle}
 						isSearchable={false}
@@ -154,15 +147,15 @@ export const Settings = ({onThemeChange, ...props}) => {
 					<label
 						htmlFor="settings-time-format"
 						className="show-unlit"
-						unlit={Utility.generateUnlitLCD('Time Format', [], 16)}
+						data-unlit={Utility.generateUnlitLCD('Time Format', [], 16)}
 					>
-					Time Format
+						Time Format
 					</label>
 					<Select
 						id="settings-time-format"
 						className="select"
 						value={timeFormat}
-						onChange={opt => setTimeFormat(opt)}
+						onChange={(opt) => setTimeFormat(opt)}
 						options={timeFormats}
 						styles={dropdownStyle}
 						isSearchable={false}
@@ -174,7 +167,7 @@ export const Settings = ({onThemeChange, ...props}) => {
 					<label
 						htmlFor="settings-date-format"
 						className="show-unlit"
-						unlit={Utility.generateUnlitLCD('Date Format', [], 16)}
+						data-unlit={Utility.generateUnlitLCD('Date Format', [], 16)}
 					>
 						Date Format
 					</label>
@@ -182,7 +175,7 @@ export const Settings = ({onThemeChange, ...props}) => {
 						id="settings-date-format"
 						className="select"
 						value={dateFormat}
-						onChange={opt => setDateFormat(opt)}
+						onChange={(opt) => setDateFormat(opt)}
 						options={dateFormats}
 						styles={dropdownStyle}
 						isSearchable={false}
@@ -191,19 +184,18 @@ export const Settings = ({onThemeChange, ...props}) => {
 			</div>
 
 			<div id="settings-buttons">
-				<button type="button" onClick={saveSettings} style={{width: '50%'}}>
+				<button type="button" onClick={saveSettings} style={{ width: '50%' }}>
 					Save
 				</button>
 			</div>
 		</div>
 	);
-}
+};
 
 Settings.propTypes = {
 	onThemeChange: PropTypes.func.isRequired,
 };
 
-Settings.defaultProps = {
-};
+Settings.defaultProps = {};
 
 export default Settings;

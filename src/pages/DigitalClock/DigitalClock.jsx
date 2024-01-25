@@ -3,7 +3,7 @@ import * as Utility from '../../scripts/utility';
 
 import '../../css/digital-clock.css';
 
-export const DigitalClock = props => {
+export const DigitalClock = (props) => {
 	const [time, setTime] = useState(new Date());
 	const [timeFormat, setTimeFormat] = useState(localStorage.getItem('time-format') || '12');
 
@@ -21,7 +21,7 @@ export const DigitalClock = props => {
 	const getDayClass = (date) => {
 		const baseClasses = ['original-font'];
 		const classes = [...baseClasses, time.getDay() === date ? 'current' : ''];
-		
+
 		return classes.join(' ');
 	};
 
@@ -47,23 +47,19 @@ export const DigitalClock = props => {
 				<span className={getDayClass(6)}>Sat</span>
 			</div>
 
-			<div
-				id="digital-clock-time"
-				className="show-unlit"
-				unlit={Utility.generateUnlitLCD(getTime(), [':', ' '])}
-			>
+			<div id="digital-clock-time" className="show-unlit" data-unlit={Utility.generateUnlitLCD(getTime(), [':', ' '])}>
 				{getTime()}
 			</div>
 
 			<div
 				id="digital-clock-date"
 				className="show-unlit"
-				unlit={Utility.generateUnlitLCD(Intl.DateTimeFormat('en-US', {dateStyle: 'long'}).format(time))}
+				data-unlit={Utility.generateUnlitLCD(Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(time))}
 			>
-				{Intl.DateTimeFormat('en-US', {dateStyle: 'long'}).format(time)}
+				{Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(time)}
 			</div>
 		</div>
 	);
-}
+};
 
 export default DigitalClock;

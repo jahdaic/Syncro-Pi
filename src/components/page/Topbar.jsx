@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as Utility from '../../scripts/utility';
 
-export const TopBar = props => {
+export const TopBar = (props) => {
 	const [date, setDate] = useState(new Date());
 	const [dateFormat, setDateFormat] = useState(localStorage.getItem('date-format') || 'long');
 	const [timeFormat, setTimeFormat] = useState(localStorage.getItem('time-format') || '12');
@@ -37,20 +37,20 @@ export const TopBar = props => {
 		return () => clearInterval(interval);
 	}, []);
 
-	if(location.pathname.includes('digital-clock')) {
+	if (location.pathname.includes('digital-clock')) {
 		return null;
 	}
 
 	return (
 		<div id="top">
-			<div className="show-unlit" unlit={Utility.generateUnlitLCD(getDate())}>
+			<div className="show-unlit" data-unlit={Utility.generateUnlitLCD(getDate())}>
 				{getDate()}
 			</div>
-			<div className="show-unlit" unlit={Utility.generateUnlitLCD(getTime(), [':'])}>
+			<div className="show-unlit" data-unlit={Utility.generateUnlitLCD(getTime(), [':'])}>
 				{getTime()}
 			</div>
 		</div>
 	);
-}
+};
 
 export default TopBar;

@@ -88,7 +88,7 @@ export const Compass = (props) => {
 				<span
 					id="compass-coordinates-latitude"
 					className="show-unlit"
-					unlit={Utility.generateUnlitLCD(getDisplayLatitude())}
+					data-unlit={Utility.generateUnlitLCD(getDisplayLatitude())}
 				>
 					{getDisplayLatitude()}
 				</span>
@@ -96,7 +96,7 @@ export const Compass = (props) => {
 				<span
 					id="compass-coordinates-longitude"
 					className="show-unlit"
-					unlit={Utility.generateUnlitLCD(getDisplayLongitude())}
+					data-unlit={Utility.generateUnlitLCD(getDisplayLongitude())}
 				>
 					{getDisplayLongitude()}
 				</span>
@@ -110,18 +110,18 @@ export const Compass = (props) => {
 			</div>
 
 			<div id="compass-positioning">
-				<div id="compass-altitude" className="show-unlit" unlit={Utility.generateUnlitLCD(getDisplayAltitude())}>
+				<div id="compass-altitude" className="show-unlit" data-unlit={Utility.generateUnlitLCD(getDisplayAltitude())}>
 					{getDisplayAltitude()}
 					<br />
-					{/* <span className="show-unlit" unlit={Utility.generateUnlitLCD('Altitude')}>
+					{/* <span className="show-unlit" data-unlit={Utility.generateUnlitLCD('Altitude')}>
 						Altitude
 					</span> */}
 				</div>
 
-				<div id="compass-speed" className="show-unlit" unlit={Utility.generateUnlitLCD(getDisplaySpeed())}>
+				<div id="compass-speed" className="show-unlit" data-unlit={Utility.generateUnlitLCD(getDisplaySpeed())}>
 					{getDisplaySpeed()}
 					<br />
-					{/* <span className="show-unlit" unlit={Utility.generateUnlitLCD('Velocity')}>
+					{/* <span className="show-unlit" data-unlit={Utility.generateUnlitLCD('Velocity')}>
 					Velocity
 					</span> */}
 				</div>

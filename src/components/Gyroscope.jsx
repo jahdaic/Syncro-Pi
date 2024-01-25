@@ -7,13 +7,13 @@ const validMethods = ['orientation', 'gyroscope'];
 
 let gyroscope = null;
 
-export const Gyro = ({interval = 1, onUpdate, ...props}) => {
+export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 	const [method, setMethod] = useState('orientation');
 	const [permitted, setPermitted] = useState(false);
 	const [confirmed, setConfirmed] = useState(true);
 	const [failures, setFailures] = useState(0);
 
-	const dataFailure = err => {
+	const dataFailure = (err) => {
 		// if(failures >= failureTolerance - 1) {
 		// 	setMethod(currentMethod => {
 		// 		const newMethod = currentMethod === 'gpsd' ? 'geolocation' : 'gpsd';
@@ -24,39 +24,40 @@ export const Gyro = ({interval = 1, onUpdate, ...props}) => {
 		// 	return;
 		// }
 
-		setFailures(currentFailures => currentFailures + 1);
+		setFailures((currentFailures) => currentFailures + 1);
 		console.log(`Failed to get position via ${method}`);
 		console.error(err.type);
 	};
 
-	const cleanupGyroscopeData = gyro => ({
+	const cleanupGyroscopeData = (gyro) => ({
 		heading: gyro.z,
 		climb: gyro.y,
 		tilt: gyro.x,
-		method
+		method,
 	});
 
-	const cleanupDeviceOrientationData = gyro => ({
+	const cleanupDeviceOrientationData = (gyro) => ({
 		heading: gyro.webkitCompassHeading || gyro.alpha,
 		climb: gyro.beta,
 		tilt: gyro.gamma,
 		method,
-		failures
+		failures,
 	});
 
 	const getDataFromGyroscope = () => {
 		if (navigator?.permissions?.query) {
-			navigator.permissions.query({ name: 'gyroscope' })
-				.then(permission => {
-					if ( permission.state === 'granted' || permission.state === 'prompt' ) {
+			navigator.permissions
+				.query({ name: 'gyroscope' })
+				.then((permission) => {
+					if (permission.state === 'granted' || permission.state === 'prompt') {
 						console.log('Permission granted');
-						gyroscope = new window.Gyroscope({frequency: interval});
+						gyroscope = new window.Gyroscope({ frequency: interval });
 
-						gyroscope.addEventListener('reading', ev => {
+						gyroscope.addEventListener('reading', (ev) => {
 							onUpdate(cleanupGyroscopeData(gyroscope));
-							console.log(`Angular velocity along the X-axis ${  gyroscope.x}`);
-							console.log(`Angular velocity along the Y-axis ${  gyroscope.y}`);
-							console.log(`Angular velocity along the Z-axis ${  gyroscope.z}`);
+							console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
+							console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
+							console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
 						});
 
 						gyroscope.start();
@@ -70,13 +71,13 @@ export const Gyro = ({interval = 1, onUpdate, ...props}) => {
 		else if (window.Gyroscope) {
 			console.log('Permission not granted');
 
-			gyroscope = new window.Gyroscope({frequency: interval});
+			gyroscope = new window.Gyroscope({ frequency: interval });
 
-			gyroscope.addEventListener('reading', ev => {
+			gyroscope.addEventListener('reading', (ev) => {
 				onUpdate(cleanupGyroscopeData(gyroscope));
-				console.log(`Angular velocity along the X-axis ${  gyroscope.x}`);
-				console.log(`Angular velocity along the Y-axis ${  gyroscope.y}`);
-				console.log(`Angular velocity along the Z-axis ${  gyroscope.z}`);
+				console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
+				console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
+				console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
 			});
 
 			gyroscope.start();
@@ -86,44 +87,51 @@ export const Gyro = ({interval = 1, onUpdate, ...props}) => {
 	const getDataFromDeviceOrientation = () => {
 		if (DeviceMotionEvent.requestPermission) {
 			DeviceMotionEvent.requestPermission()
-				.then(permission => {
+				.then((permission) => {
 					if (permission === 'granted') {
 						setPermitted(true);
-						window.addEventListener('deviceorientation', ev => onUpdate(cleanupDeviceOrientationData(ev)), {});
+						window.addEventListener('deviceorientation', (ev) => onUpdate(cleanupDeviceOrientationData(ev)), {});
 					}
 					else {
 						setConfirmed(false);
 						dataFailure('Device Motion API permission denied');
 					}
 				})
-				.catch(err => {
-					if(err.name.includes('NotAllowedError')) setConfirmed(false);
+				.catch((err) => {
+					if (err.name.includes('NotAllowedError')) setConfirmed(false);
 					dataFailure(err);
 				});
 		}
 		else {
-			window.addEventListener('deviceorientation', ev => onUpdate(cleanupDeviceOrientationData(ev)));
+			window.addEventListener('deviceorientation', (ev) => onUpdate(cleanupDeviceOrientationData(ev)));
 		}
 	};
 
 	const updatePosition = () => {
-		if(method === 'orientation') getDataFromDeviceOrientation();
-		if(method === 'gyroscope') getDataFromGyroscope();
+		if (method === 'orientation') getDataFromDeviceOrientation();
+		if (method === 'gyroscope') getDataFromGyroscope();
 	};
 
 	useEffect(updatePosition, []);
 
-	if(!permitted && !confirmed) return (
-		<Confirm onConfirm={() => {setConfirmed(true); updatePosition();}} onCancel={() => {setConfirmed(true);}}>
-			<span
-				className="show-unlit"
-				unlit={Utility.fillUnlitLCD(3, 20)}
+	if (!permitted && !confirmed)
+		return (
+			<Confirm
+				onConfirm={() => {
+					setConfirmed(true);
+					updatePosition();
+				}}
+				onCancel={() => {
+					setConfirmed(true);
+				}}
 			>
-				You must grant permission to access the gyroscope.
-			</span>
-		</Confirm>);
+				<span className="show-unlit" data-unlit={Utility.fillUnlitLCD(3, 20)}>
+					You must grant permission to access the gyroscope.
+				</span>
+			</Confirm>
+		);
 
 	return null;
-}
+};
 
 export default Gyro;

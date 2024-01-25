@@ -6,9 +6,9 @@ import * as Utility from '../scripts/utility';
 const failureTolerance = 3;
 const validMethods = ['geolocation'];
 
-if(process.env.REACT_APP_GPSD_SERVER_URL) validMethods.unshift('gpsd');
+if (process.env.REACT_APP_GPSD_SERVER_URL) validMethods.unshift('gpsd');
 
-export const Location = ({interval = 1000, onUpdate, ...props}) => {
+export const Location = ({ interval = 1000, onUpdate, ...props }) => {
 	const [method, setMethod] = useState(validMethods[0]);
 	const [failedMethods, setFailedMethods] = useState([]);
 	const [permitted, setPermitted] = useState(false);
@@ -18,15 +18,15 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 	const dataFailure = (err, forceNext) => {
 		console.log('Failure', method, failures, failureTolerance, forceNext, new Date().toLocaleTimeString());
 
-		setFailures(currentFailures => {
-			if(currentFailures >= failureTolerance - 1 || forceNext) {
-				setMethod(currentMethod => {
-					const newMethod = validMethods.find(m => !failedMethods.includes(m) && m !== currentMethod);
+		setFailures((currentFailures) => {
+			if (currentFailures >= failureTolerance - 1 || forceNext) {
+				setMethod((currentMethod) => {
+					const newMethod = validMethods.find((m) => !failedMethods.includes(m) && m !== currentMethod);
 
-					if(!newMethod) return currentMethod;
+					if (!newMethod) return currentMethod;
 
 					console.log(`Changing location method to ${newMethod}`);
-					setFailedMethods(currentFailedMethods => [...currentFailedMethods, currentMethod]);
+					setFailedMethods((currentFailedMethods) => [...currentFailedMethods, currentMethod]);
 					return newMethod;
 				});
 			}
@@ -40,7 +40,7 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 		});
 	};
 
-	const cleanupGPSData = response => ({
+	const cleanupGPSData = (response) => ({
 		latitude: response.lat,
 		longitude: response.lon,
 		altitude: Utility.metersToFeet(response.alt),
@@ -50,10 +50,10 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 		speed: Utility.mpsToMPH(response.speed),
 		accuracy: Utility.metersToFeet(Math.max(response.epx, response.epy)),
 		altitudeAccuracy: Utility.metersToFeet(response.epv),
-		method
+		method,
 	});
 
-	const cleanupGeolocationData = location => ({
+	const cleanupGeolocationData = (location) => ({
 		latitude: location.coords.latitude,
 		longitude: location.coords.longitude,
 		altitude: Utility.metersToFeet(location.coords.altitude),
@@ -63,12 +63,12 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 		speed: Utility.mpsToMPH(location.coords.speed),
 		accuracy: Utility.metersToFeet(location.coords.accuracy),
 		altitudeAccuracy: Utility.metersToFeet(location.coords.altitudeAccuracy),
-		method
+		method,
 	});
 
 	const getDataFromGPSD = () => {
 		fetch(`${process.env.REACT_APP_GPSD_SERVER_URL}/gps`)
-			.then(response => response.json())
+			.then((response) => response.json())
 			.then(cleanupGPSData)
 			.then(onUpdate)
 			.then(() => setTimeout(updateLocation, interval, method))
@@ -76,18 +76,19 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 	};
 
 	const getDataFromGeolocation = () => {
-		if ( navigator?.permissions?.query) {
-			navigator.permissions.query({ name: 'geolocation' })
-				.then(permission => {
-					if ( permission.state === 'granted' || permission.state === 'prompt' ) {
+		if (navigator?.permissions?.query) {
+			navigator.permissions
+				.query({ name: 'geolocation' })
+				.then((permission) => {
+					if (permission.state === 'granted' || permission.state === 'prompt') {
 						setPermitted(true);
 						navigator.geolocation.getCurrentPosition(
-							location => {
+							(location) => {
 								onUpdate(cleanupGeolocationData(location));
 								setTimeout(updateLocation, interval);
 							},
 							dataFailure,
-							{enableHighAccuracy: true}
+							{ enableHighAccuracy: true },
 						);
 					}
 					else {
@@ -95,26 +96,26 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 						dataFailure('Geolocation API permission denied by system');
 					}
 				})
-				.catch(err => {
-					if(!permitted) setConfirmed(false);
+				.catch((err) => {
+					if (!permitted) setConfirmed(false);
 					else dataFailure(err);
 				});
 		}
 		else if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
-				location => {
+				(location) => {
 					onUpdate(cleanupGeolocationData(location));
 					setTimeout(updateLocation, interval);
 				},
 				dataFailure,
-				{enableHighAccuracy: true}
+				{ enableHighAccuracy: true },
 			);
 		}
 	};
 
 	const updateLocation = (currentMethod = method) => {
-		if(currentMethod === 'gpsd') getDataFromGPSD();
-		if(currentMethod === 'geolocation') getDataFromGeolocation();
+		if (currentMethod === 'gpsd') getDataFromGPSD();
+		if (currentMethod === 'geolocation') getDataFromGeolocation();
 	};
 
 	// useEffect(() => {
@@ -126,27 +127,26 @@ export const Location = ({interval = 1000, onUpdate, ...props}) => {
 
 	useEffect(() => updateLocation(method), []);
 
-	if(method === 'geolocation' && !permitted && !confirmed) return (
-		<Confirm
-			onConfirm={() => {
-				setConfirmed(true);
-				updateLocation();
-			}}
-			onCancel={() => {
-				setConfirmed(true);
-				dataFailure('Geolocation API permission denied by user', true);
-			}}
-		>
-			<span
-				className="show-unlit"
-				unlit={Utility.fillUnlitLCD(3, 20)}
+	if (method === 'geolocation' && !permitted && !confirmed)
+		return (
+			<Confirm
+				onConfirm={() => {
+					setConfirmed(true);
+					updateLocation();
+				}}
+				onCancel={() => {
+					setConfirmed(true);
+					dataFailure('Geolocation API permission denied by user', true);
+				}}
 			>
-				You must grant permission to access GPS.
-			</span>
-		</Confirm>);
+				<span className="show-unlit" data-unlit={Utility.fillUnlitLCD(3, 20)}>
+					You must grant permission to access GPS.
+				</span>
+			</Confirm>
+		);
 
 	return null;
-}
+};
 
 Location.propTypes = {
 	interval: PropTypes.number,
@@ -156,6 +156,5 @@ Location.propTypes = {
 Location.defaultProps = {
 	interval: 1000,
 };
-
 
 export default Location;

@@ -9,17 +9,17 @@ import '../../css/weather.css';
 const updateInterval = 900000; // 15 minutes
 const failureTolerance = 5;
 
-export const Weather = props => {
+export const Weather = (props) => {
 	const [weather, setWeather] = useState(null);
 	const [failures, setFailures] = useState(0);
 
-	const updateWeather = location => {
-		if(!process.env.REACT_APP_OPEN_WEATHER_API_KEY) {
+	const updateWeather = (location) => {
+		if (!process.env.REACT_APP_OPEN_WEATHER_API_KEY) {
 			setWeather(false);
 			return;
 		}
 
-		if(!location.latitude || !location.longitude) return;
+		if (!location.latitude || !location.longitude) return;
 
 		let weatherAPI;
 
@@ -28,38 +28,39 @@ export const Weather = props => {
 				key: process.env.REACT_APP_OPEN_WEATHER_API_KEY,
 				coordinates: {
 					lat: location?.latitude,
-					lon: location?.longitude
+					lon: location?.longitude,
 				},
-				units: "imperial"
+				units: 'imperial',
 			});
 		}
-		catch(err) {
+		catch (err) {
 			console.error(err);
 
-			if(failures >= failureTolerance - 1) {
+			if (failures >= failureTolerance - 1) {
 				setWeather(false);
 			}
 			else {
-				setFailures(currentFailures => currentFailures + 1);
+				setFailures((currentFailures) => currentFailures + 1);
 				setTimeout(updateWeather, 1000); // 1 second
 			}
 
 			return;
 		}
 
-		weatherAPI.getCurrent()
-			.then(data => {
+		weatherAPI
+			.getCurrent()
+			.then((data) => {
 				setWeather(data.weather);
 			})
-			.catch(err => {
+			.catch((err) => {
 				setWeather(false);
 			});
 	};
 
-	const getWeatherIcon = code => {
+	const getWeatherIcon = (code) => {
 		const id = 'weather-icon';
 
-		switch(code) {
+		switch (code) {
 			case '01d':
 				return <Icon.Sun id={id} />;
 			case '01n':
@@ -92,35 +93,33 @@ export const Weather = props => {
 			default:
 				return <Icon.QuestionLg id={id} />;
 		}
-	}
+	};
 
-	const degreesToCompass = direction => {
-		const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+	const degreesToCompass = (direction) => {
+		const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 		const angle = direction % 360;
 		const index = Math.round((angle < 0 ? angle + 360 : angle) / 45) % 8;
 
 		return directions[index];
 	};
 
-	if(weather === null) return (
-		<div id="weather">
-			<Location interval={updateInterval} onUpdate={updateWeather} />
-			<Icon.CloudArrowDown id="weather-icon" />
-			<div id="weather-description">
-				Weather loading...
+	if (weather === null)
+		return (
+			<div id="weather">
+				<Location interval={updateInterval} onUpdate={updateWeather} />
+				<Icon.CloudArrowDown id="weather-icon" />
+				<div id="weather-description">Weather loading...</div>
 			</div>
-		</div>
-	);
+		);
 
-	if(weather === false) return (
-		<div id="weather">
-			<Location interval={updateInterval} onUpdate={updateWeather} />
-			<Icon.ExclamationDiamond id="weather-icon" />
-			<div id="weather-description">
-				Error loading weather
+	if (weather === false)
+		return (
+			<div id="weather">
+				<Location interval={updateInterval} onUpdate={updateWeather} />
+				<Icon.ExclamationDiamond id="weather-icon" />
+				<div id="weather-description">Error loading weather</div>
 			</div>
-		</div>
-	);
+		);
 
 	return (
 		<div id="weather">
@@ -131,16 +130,16 @@ export const Weather = props => {
 					<div
 						id="weather-temp"
 						className="show-unlit"
-						unlit={Utility.generateUnlitLCD(`${Number(weather?.temp.cur).toFixed(0)}°`)}
+						data-unlit={Utility.generateUnlitLCD(`${Number(weather?.temp.cur).toFixed(0)}°`)}
 					>
 						{`${Number(weather?.temp.cur).toFixed(0)}°`}
 					</div>
 					<div
 						id="weather-feels"
 						className="show-unlit"
-						unlit={Utility.generateUnlitLCD(`Feels ${Number(weather?.feels_like.cur).toFixed(0)}°`)}
+						data-unlit={Utility.generateUnlitLCD(`Feels ${Number(weather?.feels_like.cur).toFixed(0)}°`)}
 					>
-						 {`Feels ${Number(weather?.feels_like.cur).toFixed(0)}°`}
+						{`Feels ${Number(weather?.feels_like.cur).toFixed(0)}°`}
 					</div>
 				</div>
 			</div>
@@ -148,7 +147,7 @@ export const Weather = props => {
 			<div
 				id="weather-description"
 				className="show-unlit"
-				unlit={Utility.generateUnlitLCD(Utility.toTitleCase(weather?.description))}
+				data-unlit={Utility.generateUnlitLCD(Utility.toTitleCase(weather?.description))}
 			>
 				{Utility.toTitleCase(weather?.description)}
 			</div>
@@ -157,7 +156,7 @@ export const Weather = props => {
 				<div id="weather-rain">
 					<Icon.UmbrellaFill />
 
-					<span className="show-unlit" unlit={Utility.generateUnlitLCD(`${weather?.rain}"`)}>
+					<span className="show-unlit" data-unlit={Utility.generateUnlitLCD(`${weather?.rain}"`)}>
 						{`${weather?.rain}"`}
 					</span>
 				</div>
@@ -165,27 +164,26 @@ export const Weather = props => {
 				<div id="weather-wind">
 					<Icon.Wind />
 
-					<span className="show-unlit"
-						unlit={Utility.generateUnlitLCD(
-							`${Math.round(weather?.wind.speed)} ${degreesToCompass(weather?.wind.deg)}`
-						)}>
+					<span
+						className="show-unlit"
+						data-unlit={Utility.generateUnlitLCD(
+							`${Math.round(weather?.wind.speed)} ${degreesToCompass(weather?.wind.deg)}`,
+						)}
+					>
 						{`${Math.round(weather?.wind.speed)} ${degreesToCompass(weather?.wind.deg)}`}
 					</span>
 				</div>
 
 				<div id="weather-uv">
 					<Icon.SunFill />
-					
-					<span
-						className="show-unlit"
-						unlit={Utility.generateUnlitLCD(String(Math.round(weather?.uvi || 0)))}
-					>
+
+					<span className="show-unlit" data-unlit={Utility.generateUnlitLCD(String(Math.round(weather?.uvi || 0)))}>
 						{Math.round(weather?.uvi || 0)}
 					</span>
 				</div>
 			</div>
 		</div>
 	);
-}
+};
 
 export default Weather;

@@ -7,17 +7,16 @@ import '../../css/performance.css';
 
 const resolution = 100; // 100 milliseconds
 
-export const Performance = props => {
+export const Performance = (props) => {
 	const [time, setTime] = useState(new Date());
 	const [speed, setSpeed] = useState(0);
-	const [run, setRun] = useState({start: null, end: null, topSpeed: null, to60: null, times: [], speeds: []});
+	const [run, setRun] = useState({ start: null, end: null, topSpeed: null, to60: null, times: [], speeds: [] });
 
 	const updateTime = () => setTime(new Date());
 
 	const logTime = () => {
-
-		setRun(currentRun => {
-			if(currentRun.end) return{...currentRun};
+		setRun((currentRun) => {
+			if (currentRun.end) return { ...currentRun };
 
 			const now = Date.now();
 			setTimeout(logTime, resolution);
@@ -31,28 +30,28 @@ export const Performance = props => {
 				// speeds: [...currentRun.speeds, currentSpeed || 0]
 			};
 		});
-	}
+	};
 
-	const endTimer = () => setRun(currentRun => ({ ...currentRun, end: Date.now() }));
+	const endTimer = () => setRun((currentRun) => ({ ...currentRun, end: Date.now() }));
 
 	const restartTimer = () => {
-		setRun(currentRun => ({ ...currentRun, end: null }));
+		setRun((currentRun) => ({ ...currentRun, end: null }));
 		logTime();
-	}
+	};
 
-	const resetTimer = () => setRun({start: null, end: null, topSpeed: null, to60: null, times: [], speeds: []});
+	const resetTimer = () => setRun({ start: null, end: null, topSpeed: null, to60: null, times: [], speeds: [] });
 
 	const getCurrentSpeed = () => String(Math.floor(speed || 0)).padStart(3, '0');
 
 	const getTopSpeed = () => String(Math.floor(run.topSpeed || 0)).padStart(3, '0');
 
-	const getAcceleration = () => run.to60 ? `${run.to60.toFixed(2)} s` : 'N/A';
+	const getAcceleration = () => (run.to60 ? `${run.to60.toFixed(2)} s` : 'N/A');
 
 	const getDisplayTime = () => {
 		const now = Date.now();
 		const duration = (run.end || now) - (run.start || now);
 		const minutes = String(Math.floor(duration / 1000 / 60) || 0).padStart(2, '0');
-		const seconds = String(Math.floor(duration / 1000 % 60) || 0).padStart(2, '0');
+		const seconds = String(Math.floor((duration / 1000) % 60) || 0).padStart(2, '0');
 		const milliseconds = String(duration % 1000 || 0).padStart(3, '0');
 
 		return `${minutes}:${seconds}.${milliseconds}`;
@@ -64,37 +63,36 @@ export const Performance = props => {
 		return () => clearInterval(interval);
 	}, []);
 
-	if(!speed && speed !== 0) return (
-		<div id="weather">
-			<Location onUpdate={location => setSpeed(location?.speed)} />
-			<Icon.PinMap id="weather-icon" />
-			<div id="weather-description">
-					Error getting location
+	if (!speed && speed !== 0)
+		return (
+			<div id="weather">
+				<Location onUpdate={(location) => setSpeed(location?.speed)} />
+				<Icon.PinMap id="weather-icon" />
+				<div id="weather-description">Error getting location</div>
 			</div>
-		</div>
-	);
+		);
 
 	return (
 		<div id="performance">
-			<Location onUpdate={location => setSpeed(location?.speed)} />
-			<div id="performance-speed" className="show-unlit" unlit={Utility.generateUnlitLCD(getCurrentSpeed())}>
+			<Location onUpdate={(location) => setSpeed(location?.speed)} />
+			<div id="performance-speed" className="show-unlit" data-unlit={Utility.generateUnlitLCD(getCurrentSpeed())}>
 				{getCurrentSpeed()}
 			</div>
 			<hr />
 			<div id="performance-stats">
 				<div>
-					<span className="show-unlit" unlit={Utility.generateUnlitLCD(`${getTopSpeed()} mph`)}>
+					<span className="show-unlit" data-unlit={Utility.generateUnlitLCD(`${getTopSpeed()} mph`)}>
 						{getTopSpeed()} mph
 					</span>
-					<span className="show-unlit" unlit={Utility.generateUnlitLCD('Top Spd')}>
+					<span className="show-unlit" data-unlit={Utility.generateUnlitLCD('Top Spd')}>
 						Top Spd
 					</span>
 				</div>
 				<div>
-					<span className="show-unlit" unlit={Utility.generateUnlitLCD(getAcceleration())}>
+					<span className="show-unlit" data-unlit={Utility.generateUnlitLCD(getAcceleration())}>
 						{getAcceleration()}
 					</span>
-					<span className="show-unlit" unlit={Utility.generateUnlitLCD('00 - 60')}>
+					<span className="show-unlit" data-unlit={Utility.generateUnlitLCD('00 - 60')}>
 						00 - 60
 					</span>
 				</div>
@@ -108,25 +106,25 @@ export const Performance = props => {
 				</div> */}
 			</div>
 			<hr />
-			<div id="performance-timer" className="show-unlit" unlit={Utility.generateUnlitLCD(getDisplayTime(), [':'])}>
+			<div id="performance-timer" className="show-unlit" data-unlit={Utility.generateUnlitLCD(getDisplayTime(), [':'])}>
 				{getDisplayTime()}
 			</div>
 			<div id="performance-buttons">
-				{
-					run.start && !run.end ?
-						<button type="button" onClick={endTimer}>
-							Stop
-						</button> :
-						<button type="button" onClick={run.end ? restartTimer : logTime}>
-							Start
-						</button>
-				}
+				{run.start && !run.end ? (
+					<button type="button" onClick={endTimer}>
+						Stop
+					</button>
+				) : (
+					<button type="button" onClick={run.end ? restartTimer : logTime}>
+						Start
+					</button>
+				)}
 				<button type="button" onClick={resetTimer}>
 					Reset
 				</button>
 			</div>
 		</div>
 	);
-}
+};
 
 export default Performance;

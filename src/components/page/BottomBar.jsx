@@ -78,13 +78,13 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 
 	return (
 		<div id="bottom">
-			<div onClick={prevView} onKeyPress={prevView} role="button" tabIndex={0}>
+			<div onClick={prevView} onKeyPress={prevView} role="button" alt="Previous Page" tabIndex={0}>
 				<Icon.CaretLeftFill />
 			</div>
-			<div onClick={viewSettings} onKeyPress={viewSettings} role="button" tabIndex={0}>
+			<div onClick={viewSettings} onKeyPress={viewSettings} role="button" alt="Settings" tabIndex={0}>
 				<Icon.GearFill />
 			</div>
-			<div onClick={nextView} onKeyPress={nextView} role="button" tabIndex={0}>
+			<div onClick={nextView} onKeyPress={nextView} role="button" alt="Next Page" tabIndex={0}>
 				<Icon.CaretRightFill />
 			</div>
 		</div>
