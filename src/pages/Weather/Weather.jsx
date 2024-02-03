@@ -26,7 +26,7 @@ export const Weather = (props) => {
 			return;
 		}
 
-		if (process.env.NODE_ENV === 'production' && (!location.latitude || !location.longitude)) return;
+		if (process.env.NODE_ENV === 'production' && (!location?.latitude || !location?.longitude)) return;
 
 		let weatherAPI;
 
