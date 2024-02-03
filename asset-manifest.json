@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Syncro-Pi/static/css/main.757d0918.css",
-    "main.js": "/Syncro-Pi/static/js/main.406c7e46.js",
+    "main.js": "/Syncro-Pi/static/js/main.b6742da3.js",
     "static/css/748.87a06cac.chunk.css": "/Syncro-Pi/static/css/748.87a06cac.chunk.css",
     "static/js/748.52d1457b.chunk.js": "/Syncro-Pi/static/js/748.52d1457b.chunk.js",
     "static/css/810.ee5ddb37.chunk.css": "/Syncro-Pi/static/css/810.ee5ddb37.chunk.css",
@@ -11,7 +11,7 @@
     "static/css/919.8fbc15ef.chunk.css": "/Syncro-Pi/static/css/919.8fbc15ef.chunk.css",
     "static/js/919.4d32c3ab.chunk.js": "/Syncro-Pi/static/js/919.4d32c3ab.chunk.js",
     "static/css/46.b9babd74.chunk.css": "/Syncro-Pi/static/css/46.b9babd74.chunk.css",
-    "static/js/46.9ddfe62b.chunk.js": "/Syncro-Pi/static/js/46.9ddfe62b.chunk.js",
+    "static/js/46.03dd8c86.chunk.js": "/Syncro-Pi/static/js/46.03dd8c86.chunk.js",
     "static/css/414.22758dbb.chunk.css": "/Syncro-Pi/static/css/414.22758dbb.chunk.css",
     "static/js/414.0deaf46d.chunk.js": "/Syncro-Pi/static/js/414.0deaf46d.chunk.js",
     "static/css/180.e0d0fbcf.chunk.css": "/Syncro-Pi/static/css/180.e0d0fbcf.chunk.css",
@@ -34,7 +34,7 @@
     "index.html": "/Syncro-Pi/index.html",
     "static/media/tilt.svg": "/Syncro-Pi/static/media/tilt.eb182c8b880c21e7d8ba.svg",
     "main.757d0918.css.map": "/Syncro-Pi/static/css/main.757d0918.css.map",
-    "main.406c7e46.js.map": "/Syncro-Pi/static/js/main.406c7e46.js.map",
+    "main.b6742da3.js.map": "/Syncro-Pi/static/js/main.b6742da3.js.map",
     "748.87a06cac.chunk.css.map": "/Syncro-Pi/static/css/748.87a06cac.chunk.css.map",
     "748.52d1457b.chunk.js.map": "/Syncro-Pi/static/js/748.52d1457b.chunk.js.map",
     "810.ee5ddb37.chunk.css.map": "/Syncro-Pi/static/css/810.ee5ddb37.chunk.css.map",
@@ -44,7 +44,7 @@
     "919.8fbc15ef.chunk.css.map": "/Syncro-Pi/static/css/919.8fbc15ef.chunk.css.map",
     "919.4d32c3ab.chunk.js.map": "/Syncro-Pi/static/js/919.4d32c3ab.chunk.js.map",
     "46.b9babd74.chunk.css.map": "/Syncro-Pi/static/css/46.b9babd74.chunk.css.map",
-    "46.9ddfe62b.chunk.js.map": "/Syncro-Pi/static/js/46.9ddfe62b.chunk.js.map",
+    "46.03dd8c86.chunk.js.map": "/Syncro-Pi/static/js/46.03dd8c86.chunk.js.map",
     "414.22758dbb.chunk.css.map": "/Syncro-Pi/static/css/414.22758dbb.chunk.css.map",
     "414.0deaf46d.chunk.js.map": "/Syncro-Pi/static/js/414.0deaf46d.chunk.js.map",
     "180.e0d0fbcf.chunk.css.map": "/Syncro-Pi/static/css/180.e0d0fbcf.chunk.css.map",
@@ -61,6 +61,6 @@
   },
   "entrypoints": [
     "static/css/main.757d0918.css",
-    "static/js/main.406c7e46.js"
+    "static/js/main.b6742da3.js"
   ]
 }
