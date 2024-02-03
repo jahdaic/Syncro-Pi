@@ -3,12 +3,17 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as Icon from 'react-bootstrap-icons';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useDispatch, useSelector } from 'react-redux';
+import { themeList } from '../../pages/Settings/Settings';
+import { selectSettingState, selectSystemState, selectTimestampState } from '../../store/store.selectors';
+import storeActions from '../../store/store.redux';
 
-export const BottomBar = ({ color, onColorChange, ...props }) => {
+export const BottomBar = ({ color, ...props }) => {
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const [lastUpdate, setLastUpdated] = useState(null);
-	const [view, setView] = useState(location.pathname.split('/')[1] || 'analog-clock');
+	const system = useSelector(selectSystemState);
+	const settings = useSelector(selectSettingState);
 	const views = [
 		'analog-clock',
 		'digital-clock',
@@ -20,48 +25,35 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 		'hula',
 		// 'test',
 	];
-	const colors = ['base', 'dark', 'red', 'green', 'white', 'lcd', 'lcd-black', 'lcd-red', 'lcd-blue'];
+	const themes = themeList.map((t) => t.value);
 
 	const prevView = (ev) => {
 		ev.preventDefault();
 
-		setView((currentView) => {
-			const currentIndex = views.indexOf(currentView);
-			const newView = currentIndex === 0 ? views[views.length - 1] : views[currentIndex - 1];
+		const currentIndex = views.indexOf(system.view);
+		const newView = currentIndex === 0 ? views[views.length - 1] : views[currentIndex - 1];
 
-			navigate(newView);
-			localStorage.setItem('page', newView);
-			setLastUpdated(Date.now());
-			return newView;
-		});
+		navigate(newView);
+		dispatch(storeActions.setSystem({ view: newView }));
 	};
 
 	const nextView = (ev) => {
 		ev.preventDefault();
 
-		setView((currentView) => {
-			const currentIndex = views.indexOf(currentView);
-			const newView = currentIndex === views.length - 1 ? views[0] : views[currentIndex + 1];
+		const currentIndex = views.indexOf(system.view);
+		const newView = currentIndex === views.length - 1 ? views[0] : views[currentIndex + 1];
 
-			navigate(newView);
-			localStorage.setItem('page', newView);
-			setLastUpdated(Date.now());
-			return newView;
-		});
+		navigate(newView);
+		dispatch(storeActions.setSystem({ view: newView }));
 	};
 
-	const nextColor = (ev) => {
+	const nextTheme = (ev) => {
 		ev.preventDefault();
 
-		if (typeof onColorChange !== 'function') return;
+		const currentIndex = themes.indexOf(settings.theme);
+		const newTheme = currentIndex === themes.length - 1 ? themes[0] : themes[currentIndex + 1];
 
-		onColorChange((currentColor) => {
-			const currentIndex = colors.indexOf(currentColor);
-			const newColor = currentIndex === colors.length - 1 ? colors[0] : colors[currentIndex + 1];
-
-			localStorage.setItem('theme', newColor);
-			return newColor;
-		});
+		dispatch(storeActions.setSettings({ theme: newTheme }));
 	};
 
 	const viewSettings = () => {
@@ -70,7 +62,7 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 
 	useHotkeys('left', prevView);
 	useHotkeys('right', nextView);
-	useHotkeys('c', nextColor);
+	useHotkeys('c', nextTheme);
 
 	if (location.pathname.includes('settings')) {
 		return null;
@@ -78,13 +70,13 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 
 	return (
 		<div id="bottom">
-			<div onClick={prevView} onKeyPress={prevView} role="button" alt="Previous Page" tabIndex={0}>
+			<div onClick={prevView} onKeyDown={prevView} role="button" alt="Previous Page" tabIndex={-1}>
 				<Icon.CaretLeftFill />
 			</div>
-			<div onClick={viewSettings} onKeyPress={viewSettings} role="button" alt="Settings" tabIndex={0}>
+			<div onClick={viewSettings} onKeyDown={viewSettings} role="button" alt="Settings" tabIndex={-1}>
 				<Icon.GearFill />
 			</div>
-			<div onClick={nextView} onKeyPress={nextView} role="button" alt="Next Page" tabIndex={0}>
+			<div onClick={nextView} onKeyDown={nextView} role="button" alt="Next Page" tabIndex={-1}>
 				<Icon.CaretRightFill />
 			</div>
 		</div>
@@ -93,7 +85,6 @@ export const BottomBar = ({ color, onColorChange, ...props }) => {
 
 BottomBar.propTypes = {
 	color: PropTypes.string,
-	onColorChange: PropTypes.func.isRequired,
 };
 
 BottomBar.defaultProps = {

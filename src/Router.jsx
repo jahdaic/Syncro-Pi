@@ -1,53 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Container from './components/page/Container';
 import TopBar from './components/page/Topbar';
 import BottomBar from './components/page/BottomBar';
+import { selectSettingState, selectSystemState } from './store/store.selectors';
 
-import AnalogClock from './pages/AnalogClock';
-import DigitalClock from './pages/DigitalClock';
-import Speed from './pages/Speed';
-import Compass from './pages/Compass';
-import Weather from './pages/Weather';
-import Performance from './pages/Performance';
-import Spotify from './pages/Spotify';
-import Hula from './pages/Hula';
-import Settings from './pages/Settings';
-import Test from './pages/Test';
+const AnalogClock = lazy(() => import('./pages/AnalogClock'));
+const DigitalClock = lazy(() => import('./pages/DigitalClock'));
+const Speed = lazy(() => import('./pages/Speed'));
+const Compass = lazy(() => import('./pages/Compass'));
+const Weather = lazy(() => import('./pages/Weather'));
+const Performance = lazy(() => import('./pages/Performance'));
+const Spotify = lazy(() => import('./pages/Spotify'));
+const Hula = lazy(() => import('./pages/Hula'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Test = lazy(() => import('./pages/Test'));
 
-export const Router = props => {
+export const Router = (props) => {
 	const navigate = useNavigate();
-	const [theme, setTheme] = useState(localStorage.getItem('theme') || 'lcd');
+	const location = useLocation();
+	const system = useSelector(selectSystemState);
 
 	// Return to last page
 	useEffect(() => {
-		if(localStorage.getItem('page'))
-			navigate(localStorage.getItem('page'));
+		if (location.pathname === '/' && system.view) navigate(`/${system.view}`);
 	}, []);
 
 	return (
-		<Container filter={theme}>
+		<Container>
 			<TopBar />
 
 			<div id="content">
-				<Routes>
-					<Route path="/" element={<AnalogClock />} />
-					<Route path="/analog-clock" element={<AnalogClock />} />
-					<Route path="/digital-clock" element={<DigitalClock />} />
-					<Route path="/speed" element={<Speed />} />
-					<Route path="/compass" element={<Compass />} />
-					<Route path="/weather" element={<Weather />} />
-					<Route path="/performance" element={<Performance />} />
-					<Route path="/spotify" element={<Spotify />} />
-					<Route path="/hula" element={<Hula />} />
-					<Route path="/settings" element={<Settings onThemeChange={setTheme} />} />
-					<Route path="/test" element={<Test />} />
-				</Routes>
+				<Suspense fallback={<div />}>
+					<Routes>
+						<Route path="/" element={<AnalogClock />} />
+						<Route path="/analog-clock" element={<AnalogClock />} />
+						<Route path="/digital-clock" element={<DigitalClock />} />
+						<Route path="/speed" element={<Speed />} />
+						<Route path="/compass" element={<Compass />} />
+						<Route path="/weather" element={<Weather />} />
+						<Route path="/performance" element={<Performance />} />
+						<Route path="/spotify" element={<Spotify />} />
+						<Route path="/hula" element={<Hula />} />
+						<Route path="/settings" element={<Settings />} />
+						<Route path="/test" element={<Test />} />
+					</Routes>
+				</Suspense>
 			</div>
 
-			<BottomBar color={theme} onColorChange={setTheme} />
+			<BottomBar />
 		</Container>
 	);
-}
+};
 
 export default Router;

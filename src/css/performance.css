@@ -46,3 +46,7 @@
 	display: flex;
 	justify-content: space-around;
 }
+
+#performance-buttons button {
+	cursor: pointer;
+}

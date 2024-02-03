@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-bootstrap-icons';
+import { useSelector } from 'react-redux';
 import Location from '../../components/Location';
 import Gyroscope from '../../components/Gyroscope';
 import * as Utility from '../../scripts/utility';
+import { selectGPSState, selectSettingState } from '../../store/store.selectors';
 
 import '../../css/compass.css';
 
 export const Compass = (props) => {
-	const [location, setLocation] = useState(null);
+	const settings = useSelector(selectSettingState);
+	const location = useSelector(selectGPSState);
+	// const [location, setLocation] = useState(null);
 	const [position, setPosition] = useState(null);
 
 	const getCompassSize = () => {
@@ -40,7 +44,7 @@ export const Compass = (props) => {
 	};
 
 	const getDisplayAltitude = () => {
-		const units = localStorage.getItem('units') === 'imperial' ? 'ft' : 'm';
+		const units = settings.units === 'imperial' ? 'ft' : 'm';
 		const value = Math.floor(location?.altitude || 0);
 		const sign = value < 0 ? '-' : '';
 		let length = value < 0 ? 3 : 4;
@@ -51,7 +55,7 @@ export const Compass = (props) => {
 	};
 
 	const getDisplaySpeed = () => {
-		const units = localStorage.getItem('units') === 'imperial' ? 'mph' : 'km/h';
+		const units = settings.units === 'imperial' ? 'mph' : 'km/h';
 		const value = Math.floor(location?.speed || 0);
 		const sign = value < 0 ? '-' : '';
 		let length = value < 0 ? 2 : 3;
@@ -61,27 +65,38 @@ export const Compass = (props) => {
 		return `${sign}${String(Math.abs(value)).padStart(length, '0')} ${units}`;
 	};
 
+	console.log('GPS', location);
+
 	if (location === null)
 		return (
-			<div id="weather">
-				<Location onUpdate={setLocation} />
-				<Icon.Compass id="weather-icon" />
-				<div id="weather-description">Compass loading...</div>
+			<div className="loading-screen">
+				<Icon.Compass className="big-icon" />
+				<div
+					id="weather-description"
+					className="show-unlit"
+					data-unlit={Utility.generateUnlitLCD('Compass loading...')}
+				>
+					Compass loading...
+				</div>
 			</div>
 		);
 
 	if (location === -1)
 		return (
-			<div id="weather">
-				<Location onUpdate={setLocation} />
-				<Icon.PinMap id="weather-icon" />
-				<div id="weather-description">Error getting location</div>
+			<div className="loading-screen">
+				<Icon.PinMap className="big-icon" />
+				<div
+					id="weather-description"
+					className="show-unlit"
+					data-unlit={Utility.generateUnlitLCD('Error getting location')}
+				>
+					Error getting location
+				</div>
 			</div>
 		);
 
 	return (
 		<div id="compass">
-			<Location onUpdate={setLocation} />
 			<Gyroscope onUpdate={setPosition} />
 
 			<div id="compass-coordinates">

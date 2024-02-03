@@ -56,14 +56,14 @@
 #spotify-progress-current {
 	font-size: 0.75em;
 	position: absolute;
-	top: -1.2em;
+	top: -1.5em;
 	left: 0;
 }
 
 #spotify-progress-total {
 	font-size: 0.75em;
 	position: absolute;
-	top: -1.2em;
+	top: -1.5em;
 	right: 0;
 }
 
@@ -84,11 +84,13 @@
 
 #spotify-play svg {
 	font-size: 3em;
+	cursor: pointer;
 }
 
 
 #spotify-prev svg, #spotify-next svg {
 	font-size: 2em;
+	cursor: pointer;
 }
 
 #spotify-graph {

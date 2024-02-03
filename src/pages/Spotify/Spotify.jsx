@@ -4,39 +4,56 @@ import SpotifyWebAPI from 'spotify-web-api-node';
 import SpotifyWebAPIServer from 'spotify-web-api-node/src/server-methods';
 import * as Icon from 'react-bootstrap-icons';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Utility from '../../scripts/utility';
+import { selectSpotifyState } from '../../store/store.selectors';
+import storeActions from '../../store/store.redux';
 
 import '../../css/spotify.css';
 
-const SpotifyAPI = Object.assign(
-	new SpotifyWebAPI({
-		accessToken: JSON.parse(localStorage.getItem('access-token'))?.access_token,
-		refreshToken: JSON.parse(localStorage.getItem('access-token'))?.refresh_token,
-		clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
-		redirectUri: `${location.origin}/Syncro-Pi/spotify`,
-	}),
-	SpotifyWebAPIServer,
-);
+// const SpotifyAPI = Object.assign(
+// 	new SpotifyWebAPI({
+// 		accessToken: JSON.parse(localStorage.getItem('access-token'))?.access_token,
+// 		refreshToken: JSON.parse(localStorage.getItem('access-token'))?.refresh_token,
+// 		clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+// 		redirectUri: `${location.origin}/Syncro-Pi/spotify`,
+// 	}),
+// 	SpotifyWebAPIServer,
+// );
 
 export const Spotify = (props) => {
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const [challenge, setChallenge] = useState(localStorage.getItem('challenge') || Utility.randomString(69));
-	const [state, setState] = useState(localStorage.getItem('state') || Utility.randomString(13));
+	const spotify = useSelector(selectSpotifyState);
+	const [spotifyAPI, setSpotifyAPI] = useState(
+		Object.assign(
+			new SpotifyWebAPI({
+				accessToken: spotify?.tokens?.access_token,
+				refreshToken: spotify?.tokens?.refresh_token,
+				clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
+				redirectUri: `${document.location.origin}/Syncro-Pi/spotify`,
+			}),
+			SpotifyWebAPIServer,
+		),
+	);
 	const [track, setTrack] = useState(null);
 	const [trackAnalysis, setTrackAnalysis] = useState(null);
 	const [pitches, setPitches] = useState([]);
 	const [lastRender, setLastRender] = useState(null);
+
+	console.log('SPOTIFY', spotify);
 
 	const setTokens = (data) => {
 		const tokens = data.body || data;
 
 		if (!tokens) return;
 
-		localStorage.setItem('access-token', JSON.stringify(tokens));
+		// localStorage.setItem('access-token', JSON.stringify(tokens));
+		dispatch(storeActions.setSpotify({ tokens }));
 
-		SpotifyAPI.setAccessToken(tokens.access_token);
-		SpotifyAPI.setRefreshToken(tokens.refresh_token);
+		spotifyAPI.setAccessToken(tokens.access_token);
+		spotifyAPI.setRefreshToken(tokens.refresh_token);
 	};
 
 	const handleError = (err, retry) => {
@@ -75,9 +92,9 @@ export const Spotify = (props) => {
 			body: [
 				`grant_type=authorization_code`,
 				`code=${code}`,
-				`redirect_uri=${encodeURIComponent(SpotifyAPI.getRedirectURI())}`,
-				`client_id=${encodeURIComponent(SpotifyAPI.getClientId())}`,
-				`code_verifier=${encodeURIComponent(challenge)}`,
+				`redirect_uri=${encodeURIComponent(spotifyAPI.getRedirectURI())}`,
+				`client_id=${encodeURIComponent(spotifyAPI.getClientId())}`,
+				`code_verifier=${encodeURIComponent(spotify.challenge)}`,
 			].join('&'),
 		})
 			.then((response) => response.json())
@@ -96,20 +113,20 @@ export const Spotify = (props) => {
 			return;
 		}
 
-		if (location.search.includes(`state=${state}`)) {
+		if (location.search.includes(`state=${spotify.state}`)) {
 			getAccessToken().then(() => navigate('/spotify'));
 			return;
 		}
 
 		const scopes = ['user-read-playback-state', 'user-modify-playback-state'];
-		const authURL = SpotifyAPI.createAuthorizeURL(scopes, state);
-		const challengeCode = Utility.base64URLEncode(await Utility.hashString(challenge));
+		const authURL = spotifyAPI.createAuthorizeURL(scopes, spotify.state);
+		const challengeCode = Utility.base64URLEncode(await Utility.hashString(spotify.challenge));
 
 		window.location.href = `${authURL}&code_challenge_method=S256&code_challenge=${challengeCode}`;
 	};
 
 	const reauthorize = () => {
-		if (!SpotifyAPI.getRefreshToken()) {
+		if (!spotifyAPI.getRefreshToken()) {
 			authorize();
 			return Promise.reject();
 		}
@@ -122,8 +139,8 @@ export const Spotify = (props) => {
 			},
 			body: [
 				`grant_type=refresh_token`,
-				`refresh_token=${encodeURIComponent(SpotifyAPI.getRefreshToken())}`,
-				`client_id=${encodeURIComponent(SpotifyAPI.getClientId())}`,
+				`refresh_token=${encodeURIComponent(spotifyAPI.getRefreshToken())}`,
+				`client_id=${encodeURIComponent(spotifyAPI.getClientId())}`,
 			].join('&'),
 		})
 			.then((response) => response.json())
@@ -131,7 +148,7 @@ export const Spotify = (props) => {
 			.then(updateStatus)
 			.catch(handleError);
 
-		// SpotifyAPI.refreshAccessToken().then(setTokens).catch(handleError);
+		// spotifyAPI.refreshAccessToken().then(setTokens).catch(handleError);
 	};
 
 	const getTrackAnalysis = () => {
@@ -139,7 +156,8 @@ export const Spotify = (props) => {
 			return;
 		}
 
-		SpotifyAPI.getAudioAnalysisForTrack(track?.item?.id)
+		spotifyAPI
+			.getAudioAnalysisForTrack(track?.item?.id)
 			.then((data) => {
 				if (data.body === null) setTrackAnalysis(-1);
 				else setTrackAnalysis({ ...data.body, timestamp: Date.now() });
@@ -148,12 +166,13 @@ export const Spotify = (props) => {
 	};
 
 	const updateStatus = () => {
-		if (!SpotifyAPI.getAccessToken()) {
+		if (!spotifyAPI.getAccessToken()) {
 			authorize();
 			return;
 		}
 
-		SpotifyAPI.getMyCurrentPlaybackState()
+		spotifyAPI
+			.getMyCurrentPlaybackState()
 			.then((data) => {
 				if (data.body === null) setTrack(-1);
 				else setTrack({ ...data.body, timestamp: Date.now() });
@@ -172,19 +191,19 @@ export const Spotify = (props) => {
 
 	const playPause = () => {
 		if (track?.is_playing) {
-			SpotifyAPI.pause().then(updateStatus).catch(handleError);
+			spotifyAPI.pause().then(updateStatus).catch(handleError);
 			return;
 		}
 
-		SpotifyAPI.play().then(updateStatus).catch(handleError);
+		spotifyAPI.play().then(updateStatus).catch(handleError);
 	};
 
 	const next = () => {
-		SpotifyAPI.skipToNext().then(updateStatus).catch(handleError);
+		spotifyAPI.skipToNext().then(updateStatus).catch(handleError);
 	};
 
 	const previous = () => {
-		SpotifyAPI.skipToPrevious().then(updateStatus).catch(handleError);
+		spotifyAPI.skipToPrevious().then(updateStatus).catch(handleError);
 	};
 
 	const getCurrentProgress = () =>
@@ -200,7 +219,7 @@ export const Spotify = (props) => {
 	// Fetch track info
 	useEffect(() => {
 		const interval = setInterval(() => {
-			if (!SpotifyAPI.getAccessToken()) return;
+			if (!spotifyAPI.getAccessToken()) return;
 			updateStatus();
 		}, 2500); // 2.5 seconds
 
@@ -227,32 +246,29 @@ export const Spotify = (props) => {
 	// Get initial play state
 	useEffect(updateStatus, []);
 
-	// Set Challenge Value and State
-	useEffect(() => {
-		localStorage.setItem('challenge', challenge);
-		localStorage.setItem('state', state);
-	}, []);
-
+	// Loading or authenticating
 	if (track === null)
 		return (
-			<div id="weather">
-				<Icon.Boombox id="weather-icon" />
+			<div className="loading-screen">
+				<Icon.Boombox className="big-icon" />
 				<div id="weather-description">Music loading...</div>
 			</div>
 		);
 
+	// Error authenticating
 	if (track === false)
 		return (
-			<div id="weather">
-				<Icon.VolumeMute id="weather-icon" />
+			<div className="loading-screen">
+				<Icon.VolumeMute className="big-icon" />
 				<div id="weather-description">Music could not load</div>
 			</div>
 		);
 
+	// No music currently playing on Spotify
 	if (track === -1)
 		return (
-			<div id="weather">
-				<Icon.Boombox id="weather-icon" />
+			<div className="loading-screen">
+				<Icon.Boombox className="big-icon" />
 				<div id="weather-description">Music not playing</div>
 			</div>
 		);
@@ -297,14 +313,14 @@ export const Spotify = (props) => {
 				/>
 			</div>
 			<div id="spotify-controls">
-				<div id="spotify-prev" onClick={previous} onKeyPress={previous} role="button" alt="Previous Song" tabIndex={0}>
-					<Icon.SkipStart />
+				<div id="spotify-prev" onClick={previous} onKeyDown={previous} role="button" alt="Previous Song" tabIndex={0}>
+					<Icon.SkipStartFill />
 				</div>
-				<div id="spotify-play" onClick={playPause} onKeyPress={playPause} role="button" tabIndex={0}>
+				<div id="spotify-play" onClick={playPause} onKeyDown={playPause} role="button" tabIndex={0}>
 					{track?.is_playing ? <Icon.PauseCircle /> : <Icon.PlayCircle />}
 				</div>
-				<div id="spotify-next" onClick={next} onKeyPress={next} role="button" alt="Next Song" tabIndex={0}>
-					<Icon.SkipEnd />
+				<div id="spotify-next" onClick={next} onKeyDown={next} role="button" alt="Next Song" tabIndex={0}>
+					<Icon.SkipEndFill />
 				</div>
 			</div>
 			{/* <div id="spotify-graph"> */}

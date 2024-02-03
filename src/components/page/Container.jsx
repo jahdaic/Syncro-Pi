@@ -1,21 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { selectSettingState } from '../../store/store.selectors';
 
-export function Container({ filter, children, ...props }) {
+export function Container({  children, ...props }) {
+	const settings = useSelector(selectSettingState);
+
 	return (
-		<div id="container" className={`filter-${filter}`}>
+		<div id="container" className={`filter-${settings.theme}`}>
 			{children}
 		</div>
 	);
 }
 
 Container.propTypes = {
-	filter: PropTypes.string,
 	children: PropTypes.node,
 };
 
 Container.defaultProps = {
-	filter: 'white',
 	children: null,
 };
 

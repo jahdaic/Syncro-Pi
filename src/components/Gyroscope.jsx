@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import Confirm from './Confirm';
 import * as Utility from '../scripts/utility';
 
@@ -132,6 +133,15 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 		);
 
 	return null;
+};
+
+Gyro.propTypes = {
+	interval: PropTypes.number,
+	onUpdate: PropTypes.func.isRequired,
+};
+
+Gyro.defaultProps = {
+	interval: 1,
 };
 
 export default Gyro;

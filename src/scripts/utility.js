@@ -4,7 +4,7 @@
  * @returns {String}
  */
 export const toTitleCase = str => 
-	str.replace(/\w\S*/g, txt => (txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
+	str?.replace(/\w\S*/g, txt => (txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
 
 /**
  * Converts a time value in milliseconds to a MM:SS string
@@ -51,6 +51,19 @@ export const metersToFeet = m => {
 
 	return m;
 }
+
+export const serializeDates = obj => {
+	const newObj = {...obj};
+
+	Object.keys(obj).forEach(key => {
+		if(obj[key] instanceof Date)
+			newObj[key] = obj[key].toISOString();
+		else if(typeof obj[key] === 'object')
+			newObj[key] = serializeDates(obj[key]);
+	});
+
+	return newObj;
+};
 
 /**
  * Generates a random string of letters and numbers

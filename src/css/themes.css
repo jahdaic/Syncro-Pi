@@ -104,6 +104,11 @@
 	filter: invert(1);
 }
 
+#container[class*='filter-lcd'] #spotify-progress-fill,
+#container[class*='filter-lcd'] #spotify-progress {
+	box-shadow: var(--lcd-shadow), inset var(--lcd-shadow);
+}
+
 [class*='filter-lcd'] .show-unlit:before {
 	content: attr(data-unlit);
 	opacity: 8%;

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import * as Utility from '../../scripts/utility';
+import { selectSettingState } from '../../store/store.selectors';
 
 import '../../css/digital-clock.css';
 
 export const DigitalClock = (props) => {
+	const settings = useSelector(selectSettingState);
 	const [time, setTime] = useState(new Date());
-	const [timeFormat, setTimeFormat] = useState(localStorage.getItem('time-format') || '12');
 
 	const updateTime = () => {
 		setTime(new Date());
@@ -13,7 +15,7 @@ export const DigitalClock = (props) => {
 
 	const getTime = () => {
 		const timeStyle = 'short';
-		const hour12 = timeFormat === '12';
+		const hour12 = settings.timeFormat === '12';
 
 		return Intl.DateTimeFormat([], { timeStyle, hour12 }).format(time);
 	};
@@ -24,10 +26,6 @@ export const DigitalClock = (props) => {
 
 		return classes.join(' ');
 	};
-
-	useEffect(() => {
-		setTimeFormat(localStorage.getItem('time-format'));
-	}, [localStorage.getItem('time-format')]);
 
 	useEffect(() => {
 		const interval = setInterval(updateTime, 1000); // 1 second

@@ -168,6 +168,24 @@ option:checked:before {
 }
 
 #bottom > * {
+	height: 100%;
 	width: 100%;
 	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.loading-screen {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.big-icon {
+	font-size: 5em;
 }

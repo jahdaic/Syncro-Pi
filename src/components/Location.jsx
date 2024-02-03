@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import Confirm from './Confirm';
 import * as Utility from '../scripts/utility';
+import storeActions from '../store/store.redux';
 
 const failureTolerance = 3;
 const validMethods = ['geolocation'];
 
-if (process.env.REACT_APP_GPSD_SERVER_URL) validMethods.unshift('gpsd');
+// if (process.env.REACT_APP_GPSD_SERVER_URL) validMethods.unshift('gpsd');
 
-export const Location = ({ interval = 1000, onUpdate, ...props }) => {
+export const Location = ({ interval = 1000, ...props }) => {
+	const dispatch = useDispatch();
 	const [method, setMethod] = useState(validMethods[0]);
 	const [failedMethods, setFailedMethods] = useState([]);
 	const [permitted, setPermitted] = useState(false);
@@ -70,7 +73,7 @@ export const Location = ({ interval = 1000, onUpdate, ...props }) => {
 		fetch(`${process.env.REACT_APP_GPSD_SERVER_URL}/gps`)
 			.then((response) => response.json())
 			.then(cleanupGPSData)
-			.then(onUpdate)
+			.then((data) => dispatch(storeActions.setGPS(data)))
 			.then(() => setTimeout(updateLocation, interval, method))
 			.catch(dataFailure);
 	};
@@ -84,7 +87,7 @@ export const Location = ({ interval = 1000, onUpdate, ...props }) => {
 						setPermitted(true);
 						navigator.geolocation.getCurrentPosition(
 							(location) => {
-								onUpdate(cleanupGeolocationData(location));
+								dispatch(storeActions.setGPS(cleanupGeolocationData(location)));
 								setTimeout(updateLocation, interval);
 							},
 							dataFailure,
@@ -104,7 +107,7 @@ export const Location = ({ interval = 1000, onUpdate, ...props }) => {
 		else if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				(location) => {
-					onUpdate(cleanupGeolocationData(location));
+					dispatch(storeActions.setGPS(cleanupGeolocationData(location)));
 					setTimeout(updateLocation, interval);
 				},
 				dataFailure,

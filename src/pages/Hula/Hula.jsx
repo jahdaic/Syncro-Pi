@@ -46,7 +46,7 @@ export const Hula = props => {
 
 
 	return (
-		<div id="hula" onClick={nextImage} onKeyPress={nextImage} role="button" tabIndex={0}>
+		<div id="hula" onClick={nextImage} onKeyDown={nextImage} role="button" tabIndex={0}>
 			<div id="hula-image" style={{backgroundImage: `url(${getImage()})`}} alt="Hula Girl" />
 		</div>
 	);

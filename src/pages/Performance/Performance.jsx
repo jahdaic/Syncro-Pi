@@ -67,7 +67,7 @@ export const Performance = (props) => {
 		return (
 			<div id="weather">
 				<Location onUpdate={(location) => setSpeed(location?.speed)} />
-				<Icon.PinMap id="weather-icon" />
+				<Icon.PinMap className="big-icon" />
 				<div id="weather-description">Error getting location</div>
 			</div>
 		);
