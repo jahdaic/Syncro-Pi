@@ -1,0 +1,10 @@
+{
+	"rewrites": [
+		{ "source": "/Syncro-Pi", "destination": "/index.html"},
+		{ "source": "/Syncro-Pi/static/:type/:file", "destination": "/static/:type/:file"},
+		{ "source": "/Syncro-Pi/:file.:type", "destination": "/:file.:type"},
+		{ "source": "/Syncro-Pi/:page", "destination": "/index.html"},
+		{ "source": "/Syncro-Pi/**", "destination": "/"}
+	],
+	"directoryListing": false
+}
