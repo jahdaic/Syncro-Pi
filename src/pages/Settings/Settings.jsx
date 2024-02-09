@@ -16,6 +16,7 @@ export const themeList = [
 	{ value: 'red', label: 'Red' },
 	{ value: 'green', label: 'Green' },
 	{ value: 'white', label: 'Inverse' },
+	{ value: 'cyberpunk', label: 'Cyberpunk' },
 	{ value: 'lcd', label: 'LCD' },
 	{ value: 'lcd-black', label: 'Inverse LCD' },
 	{ value: 'lcd-red', label: 'Red LCD' },

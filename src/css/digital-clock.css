@@ -23,6 +23,10 @@
 	white-space: nowrap;
 }
 
+#digital-clock-time .units {
+	font-size: 1em;
+}
+
 #digital-clock-date {
 	text-align: center;
 }

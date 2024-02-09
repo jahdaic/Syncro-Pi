@@ -4,23 +4,23 @@ import { useSelector } from 'react-redux';
 import Location from '../../components/Location';
 import Gyroscope from '../../components/Gyroscope';
 import * as Utility from '../../scripts/utility';
-import { selectGPSState, selectSettingState } from '../../store/store.selectors';
+import { selectGPSState, selectGyroState, selectSettingState } from '../../store/store.selectors';
 
 import '../../css/compass.css';
 
 export const Compass = (props) => {
 	const settings = useSelector(selectSettingState);
 	const location = useSelector(selectGPSState);
-	// const [location, setLocation] = useState(null);
+	const gyro = useSelector(selectGyroState);
 	const [position, setPosition] = useState(null);
 
 	const getCompassSize = () => {
-		const coordinateHeight = document.getElementById('compass-coordinates')?.clientHeight;
-		const positionHeight = document.getElementById('compass-positioning')?.clientHeight;
-		const topHeight = document.getElementById('top')?.clientHeight;
-		const bottomHeight = document.getElementById('bottom')?.clientHeight;
-		const contentHeight = document.getElementById('content')?.clientHeight;
-		const contentWidth = document.getElementById('content')?.clientWidth;
+		const coordinateHeight = document.getElementById('compass-coordinates')?.clientHeight || 0;
+		const positionHeight = document.getElementById('compass-positioning')?.clientHeight || 0;
+		const topHeight = document.getElementById('top')?.clientHeight || 0;
+		const bottomHeight = document.getElementById('bottom')?.clientHeight || 0;
+		const contentHeight = document.getElementById('content')?.clientHeight || 0;
+		const contentWidth = document.getElementById('content')?.clientWidth || 0;
 
 		return Math.min(contentHeight - topHeight - bottomHeight - positionHeight - coordinateHeight, contentWidth);
 	};
@@ -31,7 +31,7 @@ export const Compass = (props) => {
 		const direction = location?.latitude >= 0 ? 'N' : 'S';
 		const latitude = Math.abs(location?.latitude).toFixed(3);
 
-		return `${latitude}° ${direction}`;
+		return <>{latitude}<span className="units">° {direction}</span></>;
 	};
 
 	const getDisplayLongitude = () => {
@@ -40,7 +40,7 @@ export const Compass = (props) => {
 		const direction = location?.latitude >= 0 ? 'E' : 'W';
 		const longitude = Math.abs(location?.longitude).toFixed(3);
 
-		return `${longitude}° ${direction}`;
+		return <>{longitude}<span className="units">° {direction}</span></>;
 	};
 
 	const getDisplayAltitude = () => {
@@ -51,7 +51,7 @@ export const Compass = (props) => {
 
 		if (units === 'm') length++;
 
-		return `${sign}${String(Math.abs(value)).padStart(length, '0')} ${units}`;
+		return <>{sign}{String(Math.abs(value)).padStart(length, '0')}<span className="units"> {units}</span></>;
 	};
 
 	const getDisplaySpeed = () => {
@@ -62,7 +62,7 @@ export const Compass = (props) => {
 
 		if (units === 'm') length--;
 
-		return `${sign}${String(Math.abs(value)).padStart(length, '0')} ${units}`;
+		return <>{sign}{String(Math.abs(value)).padStart(length, '0')}<span className="units"> {units}</span></>;
 	};
 
 	console.log('GPS', location);

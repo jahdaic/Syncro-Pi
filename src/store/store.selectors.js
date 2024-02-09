@@ -10,3 +10,4 @@ export const selectGPSState = createSelector([selectDomain], state => state.gps)
 export const selectGyroState = createSelector([selectDomain], state => state.gyro);
 export const selectWeatherState = createSelector([selectDomain], state => state.weather);
 export const selectSpotifyState = createSelector([selectDomain], state => state.spotify);
+export const selectHulaState = createSelector([selectDomain], state => state.hula);

@@ -87,10 +87,18 @@ export const randomString = length => {
  * @returns 
  */
 export const hashString = async str => {
-	const encoder = new TextEncoder();
-	const data = encoder.encode(str);
-	const hash = await crypto.subtle.digest('SHA-256', data);
-	return hash;
+	try {
+		const encoder = new TextEncoder();
+		const data = encoder.encode(str);
+		const hash = await crypto.subtle?.digest('SHA-256', data);
+		// throw new Error(`${data} - ${Cryp}`);
+		return hash;
+	}
+	catch (err) {
+		console.error(err);
+		// throw new Error(`${err} - ${crypto}`);
+		return '';
+	};
 };
 
 /**
@@ -105,6 +113,23 @@ export const base64URLEncode = str =>
 		.replace(/=+$/, '');
 
 /**
+ * Gets the child of a component as a string
+ * @param params - The params of the XGrid column
+ * @returns The child value as a string
+ */
+export const getColChildValueString = (params) => {
+	const child = params?.value?.props?.children || params?.props?.children || params;
+
+	if (typeof params.value === 'string') return params.value;
+	if (typeof child === 'string' || typeof child === 'number') return child;
+	if (Array.isArray(child)) return child.map(c => typeof c === 'object' ? getColChildValueString(c) : c).join('');
+	if (Array.isArray(params?.value)) return params?.value.map(p => getColChildValueString(p)).join('');
+	if (typeof child === 'object') return getColChildValueString(child);
+
+	return '';
+};
+
+/**
  * Converts all characters in a string into ᛤ
  * @param {String} str - The string to convert
  * @param {String[]} exclude - Characters that should be exluded from conversion
@@ -113,7 +138,7 @@ export const base64URLEncode = str =>
  * @returns 
  */
 export const generateUnlitLCD = (str, exclude = [], before = 0, after = 0) => {
-	let newStr = str;
+	let newStr = typeof str === 'string' ? str : getColChildValueString(str);
 
 	if(before) newStr = newStr.padStart(before, 'ᛤ');
 	if(after) newStr = newStr.padEnd(after, 'ᛤ');
@@ -130,3 +155,4 @@ export const fillUnlitLCD = (rows, columns) => {
 
 	return text;
 };
+

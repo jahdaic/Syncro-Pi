@@ -1,3 +1,5 @@
+@import url(./fx.css);
+
 #spotify {
 	height: 100%;
 	width: 100%;
@@ -30,8 +32,19 @@
 	text-align: center;
 	white-space: nowrap;
 	overflow: hidden;
-	text-overflow: ellipsis;
+	/* text-overflow: ellipsis; */
+
+	& div {
+		font-size: 1.7em;
+	};
+
+	& div[data-overflow=true] {
+		animation: marquee 15s linear infinite;
+	};
 }
+
+#spotify-name 
+
 
 #spotify-artist {
 	font-size: 0.75em;
@@ -80,6 +93,13 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+}
+
+#spotify-controls [role=button] {
+	width: 30%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #spotify-play svg {

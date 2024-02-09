@@ -25,6 +25,7 @@ export const initialState = {
 		challenge: Utility.randomString(69),
 		state: Utility.randomString(13)
 	},
+	hula: 'hula-girl'
 };
 
 const storeSlice = createSlice({
@@ -48,6 +49,9 @@ const storeSlice = createSlice({
 		},
 		setSpotify(state, action) {
 			return {...state, spotify: {...state.spotify, ...action.payload}};
+		},
+		setHula(state, action) {
+			return {...state, hula: action.payload};
 		},
 	}
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SpotifyWebAPI from 'spotify-web-api-node';
 import SpotifyWebAPIServer from 'spotify-web-api-node/src/server-methods';
@@ -26,6 +26,7 @@ export const Spotify = (props) => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const spotify = useSelector(selectSpotifyState);
+	const marqueeRef = useRef(0);
 	const [spotifyAPI, setSpotifyAPI] = useState(
 		Object.assign(
 			new SpotifyWebAPI({
@@ -41,8 +42,6 @@ export const Spotify = (props) => {
 	const [trackAnalysis, setTrackAnalysis] = useState(null);
 	const [pitches, setPitches] = useState([]);
 	const [lastRender, setLastRender] = useState(null);
-
-	console.log('SPOTIFY', spotify);
 
 	const setTokens = (data) => {
 		const tokens = data.body || data;
@@ -120,7 +119,14 @@ export const Spotify = (props) => {
 
 		const scopes = ['user-read-playback-state', 'user-modify-playback-state'];
 		const authURL = spotifyAPI.createAuthorizeURL(scopes, spotify.state);
-		const challengeCode = Utility.base64URLEncode(await Utility.hashString(spotify.challenge));
+
+		let challenge = '';
+		if(!spotify.challenge) {
+			challenge = Utility.randomString(69);
+			dispatch(storeActions.setSpotify({challenge}));
+		}
+
+		const challengeCode = Utility.base64URLEncode(await Utility.hashString(spotify.challenge || challenge));
 
 		window.location.href = `${authURL}&code_challenge_method=S256&code_challenge=${challengeCode}`;
 	};
@@ -234,11 +240,11 @@ export const Spotify = (props) => {
 	}, []);
 
 	// Update graph
-	useEffect(() => {
-		const interval = setInterval(updatePitches, 100); // 0.1 second
+	// useEffect(() => {
+	// 	const interval = setInterval(updatePitches, 100); // 0.1 second
 
-		return () => clearInterval(interval);
-	}, [track, trackAnalysis]);
+	// 	return () => clearInterval(interval);
+	// }, [track, trackAnalysis]);
 
 	// Get track audio analysis on track change
 	// useEffect(getTrackAnalysis, [track?.item?.id])
@@ -277,12 +283,17 @@ export const Spotify = (props) => {
 		<div id="spotify">
 			<div id="spotify-song">
 				<div id="spotify-album" style={{ backgroundImage: `url(${track?.item?.album?.images[1]?.url})` }} />
-				<div
-					id="spotify-name"
-					className="show-unlit"
-					data-unlit={Utility.generateUnlitLCD(track?.item?.name || 'Unknown Song', [':'])}
-				>
-					{track?.item?.name || 'Unknown Song'}
+				<div id="spotify-name">
+					<div
+						ref={marqueeRef}
+						className={
+							(marqueeRef.current.offsetWidth || 0) < (marqueeRef.current.scrollWidth || 0) ? '' : 'show-unlit'
+						}
+						data-unlit={Utility.generateUnlitLCD(track?.item?.name || 'Unknown Song', [':'])}
+						data-overflow={(marqueeRef.current.offsetWidth || 0) < (marqueeRef.current.scrollWidth || 0)}
+					>
+						{track?.item?.name || 'Unknown Song'}
+					</div>
 				</div>
 				<div
 					id="spotify-artist"
@@ -317,7 +328,7 @@ export const Spotify = (props) => {
 					<Icon.SkipStartFill />
 				</div>
 				<div id="spotify-play" onClick={playPause} onKeyDown={playPause} role="button" tabIndex={0}>
-					{track?.is_playing ? <Icon.PauseCircle /> : <Icon.PlayCircle />}
+					{track?.is_playing ? <Icon.PauseFill /> : <Icon.PlayFill />}
 				</div>
 				<div id="spotify-next" onClick={next} onKeyDown={next} role="button" alt="Next Song" tabIndex={0}>
 					<Icon.SkipEndFill />

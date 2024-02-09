@@ -17,7 +17,12 @@ export const DigitalClock = (props) => {
 		const timeStyle = 'short';
 		const hour12 = settings.timeFormat === '12';
 
-		return Intl.DateTimeFormat([], { timeStyle, hour12 }).format(time);
+		const timeParts = Intl.DateTimeFormat([], { timeStyle, hour12 }).formatToParts(time);
+
+		return <>
+			{timeParts.find(p => p.type === 'hour').value}:{timeParts.find(p => p.type === 'minute').value}
+			<span className="units"> {timeParts.find(p => p.type === 'dayPeriod')?.value || ''}</span>
+		</>;
 	};
 
 	const getDayClass = (date) => {

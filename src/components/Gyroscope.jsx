@@ -37,13 +37,16 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 		method,
 	});
 
-	const cleanupDeviceOrientationData = (gyro) => ({
-		heading: gyro.webkitCompassHeading || gyro.alpha,
-		climb: gyro.beta,
-		tilt: gyro.gamma,
-		method,
-		failures,
-	});
+	const cleanupDeviceOrientationData = (gyro) => {
+		console.log('GYRO', gyro)
+		return {
+			heading: gyro.webkitCompassHeading || gyro.alpha || 0,
+			climb: gyro.beta ? gyro.beta - 90 : 0,
+			tilt: gyro.gamma || 0,
+			method,
+			failures,
+		}
+	};
 
 	const getDataFromGyroscope = () => {
 		if (navigator?.permissions?.query) {
