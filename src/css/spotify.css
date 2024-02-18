@@ -28,6 +28,8 @@
 }
 
 #spotify-name {
+	display: flex;
+	justify-content: center;
 	width: 100%;
 	text-align: center;
 	white-space: nowrap;
@@ -35,6 +37,7 @@
 	/* text-overflow: ellipsis; */
 
 	& div {
+		width: fit-content;
 		font-size: 1.7em;
 	};
 
@@ -42,9 +45,6 @@
 		animation: marquee 15s linear infinite;
 	};
 }
-
-#spotify-name 
-
 
 #spotify-artist {
 	font-size: 0.75em;

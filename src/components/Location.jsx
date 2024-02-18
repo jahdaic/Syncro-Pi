@@ -1,32 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Confirm from './Confirm';
 import * as Utility from '../scripts/utility';
-import storeActions from '../store/store.redux';
+import storeActions, { initialState } from '../store/store.redux';
+import { selectGPSState } from '../store/store.selectors';
 
 const failureTolerance = 3;
 const validMethods = ['geolocation'];
 
-// if (process.env.REACT_APP_GPSD_SERVER_URL) validMethods.unshift('gpsd');
+if (process.env.REACT_APP_GPSD_SERVER_URL) validMethods.unshift('gpsd');
 
 export const Location = ({ interval = 1000, ...props }) => {
 	const dispatch = useDispatch();
+	const gps = useSelector(selectGPSState);
 	const [method, setMethod] = useState(validMethods[0]);
 	const [failedMethods, setFailedMethods] = useState([]);
 	const [permitted, setPermitted] = useState(false);
 	const [confirmed, setConfirmed] = useState(true);
 	const [failures, setFailures] = useState(0);
 
+	console.log('GPS', method, gps)
+
 	const dataFailure = (err, forceNext) => {
-		console.log('Failure', method, failures, failureTolerance, forceNext, new Date().toLocaleTimeString());
+		console.log('Failure', method, failures, failureTolerance, forceNext, new Date().toLocaleTimeString(), err);
+		dispatch(storeActions.setGPS({error: err}));
 
 		setFailures((currentFailures) => {
 			if (currentFailures >= failureTolerance - 1 || forceNext) {
 				setMethod((currentMethod) => {
 					const newMethod = validMethods.find((m) => !failedMethods.includes(m) && m !== currentMethod);
 
-					if (!newMethod) return currentMethod;
+					if (!newMethod) {
+						dispatch(storeActions.setGPS({failure: true}))
+						return currentMethod;
+					}
 
 					console.log(`Changing location method to ${newMethod}`);
 					setFailedMethods((currentFailedMethods) => [...currentFailedMethods, currentMethod]);
@@ -43,16 +51,16 @@ export const Location = ({ interval = 1000, ...props }) => {
 		});
 	};
 
-	const cleanupGPSData = (response) => ({
-		latitude: response.lat,
-		longitude: response.lon,
-		altitude: Utility.metersToFeet(response.alt),
-		heading: response.track,
-		climb: response.climb,
+	const cleanupGPSData = response => ({
+		latitude: response.lat || 0,
+		longitude: response.lon || 0,
+		altitude: Utility.metersToFeet(response.altMSL || 0),
+		heading: response.track || 0,
+		climb: response.climb || 0,
 		tilt: 0,
-		speed: Utility.mpsToMPH(response.speed),
-		accuracy: Utility.metersToFeet(Math.max(response.epx, response.epy)),
-		altitudeAccuracy: Utility.metersToFeet(response.epv),
+		speed: Utility.mpsToMPH(response.speed || 0),
+		accuracy: Utility.metersToFeet(Math.max(response.epx || 0, response.epy || 0)),
+		altitudeAccuracy: Utility.metersToFeet(response.epv || 0),
 		method,
 	});
 
@@ -71,9 +79,8 @@ export const Location = ({ interval = 1000, ...props }) => {
 
 	const getDataFromGPSD = () => {
 		fetch(`${process.env.REACT_APP_GPSD_SERVER_URL}/gps`)
-			.then((response) => response.json())
-			.then(cleanupGPSData)
-			.then((data) => dispatch(storeActions.setGPS(data)))
+			.then(response => response.json())
+			.then(response => dispatch(storeActions.setGPS(cleanupGPSData(response))))
 			.then(() => setTimeout(updateLocation, interval, method))
 			.catch(dataFailure);
 	};
@@ -96,7 +103,7 @@ export const Location = ({ interval = 1000, ...props }) => {
 					}
 					else {
 						setConfirmed(false);
-						dataFailure('Geolocation API permission denied by system');
+						dataFailure(`Geolocation API permission denied by system - ${permission.state}`);
 					}
 				})
 				.catch((err) => {
@@ -126,6 +133,11 @@ export const Location = ({ interval = 1000, ...props }) => {
 	// 	setTimeout(() => updateLocation(method), interval)
 	// }, [failures]);
 
+	// Just in case we need to reset bad persisted data
+	useEffect(() => {
+		if(gps === null) dispatch(storeActions.setGPS({...initialState.gps, action: undefined}));
+	}, []);
+
 	useEffect(() => setFailures(0), [method]);
 
 	useEffect(() => updateLocation(method), []);
@@ -153,7 +165,6 @@ export const Location = ({ interval = 1000, ...props }) => {
 
 Location.propTypes = {
 	interval: PropTypes.number,
-	onUpdate: PropTypes.func.isRequired,
 };
 
 Location.defaultProps = {

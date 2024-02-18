@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import Confirm from './Confirm';
 import * as Utility from '../scripts/utility';
+import storeActions, { initialState } from '../store/store.redux';
+import { selectGyroState } from '../store/store.selectors';
 
 const failureTolerance = 3;
 const validMethods = ['orientation', 'gyroscope'];
 
-let gyroscope = null;
-
-export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
+export const Gyro = ({ interval = 1, ...props }) => {
+	const dispatch = useDispatch();
+	const gyro = useSelector(selectGyroState);
 	const [method, setMethod] = useState('orientation');
 	const [permitted, setPermitted] = useState(false);
 	const [confirmed, setConfirmed] = useState(true);
 	const [failures, setFailures] = useState(0);
+	const [gyroscope, setGyroscope] = useState(null);
 
 	const dataFailure = (err) => {
 		// if(failures >= failureTolerance - 1) {
@@ -30,19 +34,19 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 		console.error(err.type);
 	};
 
-	const cleanupGyroscopeData = (gyro) => ({
-		heading: gyro.z,
-		climb: gyro.y,
-		tilt: gyro.x,
+	const cleanupGyroscopeData = (data) => ({
+		heading: data.z,
+		climb: data.y,
+		tilt: data.x,
 		method,
 	});
 
-	const cleanupDeviceOrientationData = (gyro) => {
+	const cleanupDeviceOrientationData = (data) => {
 		console.log('GYRO', gyro)
 		return {
-			heading: gyro.webkitCompassHeading || gyro.alpha || 0,
-			climb: gyro.beta ? gyro.beta - 90 : 0,
-			tilt: gyro.gamma || 0,
+			heading: data.webkitCompassHeading || data.alpha || 0,
+			climb: data.beta ? data.beta - 90 : 0,
+			tilt: data.gamma || 0,
 			method,
 			failures,
 		}
@@ -55,10 +59,10 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 				.then((permission) => {
 					if (permission.state === 'granted' || permission.state === 'prompt') {
 						console.log('Permission granted');
-						gyroscope = new window.Gyroscope({ frequency: interval });
+						setGyroscope(new window.Gyroscope({ frequency: interval }));
 
 						gyroscope.addEventListener('reading', (ev) => {
-							onUpdate(cleanupGyroscopeData(gyroscope));
+							dispatch(storeActions.setGyro(cleanupGyroscopeData(gyroscope)));
 							console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
 							console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
 							console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
@@ -75,10 +79,10 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 		else if (window.Gyroscope) {
 			console.log('Permission not granted');
 
-			gyroscope = new window.Gyroscope({ frequency: interval });
+			setGyroscope(new window.Gyroscope({ frequency: interval }));
 
 			gyroscope.addEventListener('reading', (ev) => {
-				onUpdate(cleanupGyroscopeData(gyroscope));
+				dispatch(storeActions.setGyro(cleanupGyroscopeData(gyroscope)));
 				console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
 				console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
 				console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
@@ -94,7 +98,10 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 				.then((permission) => {
 					if (permission === 'granted') {
 						setPermitted(true);
-						window.addEventListener('deviceorientation', (ev) => onUpdate(cleanupDeviceOrientationData(ev)), {});
+						window.addEventListener(
+							'deviceorientation',
+							(ev) => dispatch(storeActions.setGyro(cleanupDeviceOrientationData(ev)))
+						);
 					}
 					else {
 						setConfirmed(false);
@@ -107,7 +114,10 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 				});
 		}
 		else {
-			window.addEventListener('deviceorientation', (ev) => onUpdate(cleanupDeviceOrientationData(ev)));
+			window.addEventListener(
+				'deviceorientation',
+				(ev) => dispatch(storeActions.setGyro(cleanupDeviceOrientationData(ev)))
+			);
 		}
 	};
 
@@ -115,6 +125,12 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 		if (method === 'orientation') getDataFromDeviceOrientation();
 		if (method === 'gyroscope') getDataFromGyroscope();
 	};
+
+	// Just in case we need to reset bad persisted data
+	useEffect(() => {
+		if(gyro === null)
+			dispatch(storeActions.setGyro(initialState.gyro));
+	}, []);
 
 	useEffect(updatePosition, []);
 
@@ -140,7 +156,6 @@ export const Gyro = ({ interval = 1, onUpdate, ...props }) => {
 
 Gyro.propTypes = {
 	interval: PropTypes.number,
-	onUpdate: PropTypes.func.isRequired,
 };
 
 Gyro.defaultProps = {

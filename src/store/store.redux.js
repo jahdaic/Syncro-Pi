@@ -18,8 +18,26 @@ export const initialState = {
 		weather: 0,
 		spotify: 0
 	},
-	gps: null,
-	gyro: null,
+	gps: {
+		latitude: 0,
+		longitude: 0,
+		altitude: 0,
+		heading: 0,
+		climb: 0,
+		tilt: 0,
+		speed: 0,
+		accuracy: 0,
+		altitudeAccuracy: 0,
+		method: '',
+		failure: false,
+	},
+	gyro: {
+		heading: 0,
+		climb: 0,
+		tilt: 0,
+		method: '',
+		failure: false,
+	},
 	weather: null,
 	spotify: {
 		challenge: Utility.randomString(69),
@@ -39,10 +57,10 @@ const storeSlice = createSlice({
 			return {...state, settings: {...state.settings, ...action.payload}};
 		},
 		setGPS(state, action) {
-			return {...state, gps: action.payload};
+			return {...state, gps: {...state.gps, ...action.payload}};
 		},
 		setGyro(state, action) {
-			return {...state, gyro: action.payload};
+			return {...state, gyro: {...state.gyro, ...action.payload}};
 		},
 		setWeather(state, action) {
 			return {...state, weather: action.payload, timestamps: {...state.timestamps, weather: Date.now()}};

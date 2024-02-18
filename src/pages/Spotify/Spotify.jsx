@@ -16,7 +16,7 @@ import '../../css/spotify.css';
 // 		accessToken: JSON.parse(localStorage.getItem('access-token'))?.access_token,
 // 		refreshToken: JSON.parse(localStorage.getItem('access-token'))?.refresh_token,
 // 		clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
-// 		redirectUri: `${location.origin}/Syncro-Pi/spotify`,
+// 		redirectUri: `${location.origin}${process.env.REACT_APP_SUBDIRECTORY}/spotify`,
 // 	}),
 // 	SpotifyWebAPIServer,
 // );
@@ -33,7 +33,7 @@ export const Spotify = (props) => {
 				accessToken: spotify?.tokens?.access_token,
 				refreshToken: spotify?.tokens?.refresh_token,
 				clientId: process.env.REACT_APP_SPOTIFY_CLIENT_ID,
-				redirectUri: `${document.location.origin}/Syncro-Pi/spotify`,
+				redirectUri: `${document.location.origin}${process.env.REACT_APP_SUBDIRECTORY.replace(/\/$/, '')}/spotify`,
 			}),
 			SpotifyWebAPIServer,
 		),
@@ -43,16 +43,13 @@ export const Spotify = (props) => {
 	const [pitches, setPitches] = useState([]);
 	const [lastRender, setLastRender] = useState(null);
 
+
 	const setTokens = (data) => {
 		const tokens = data.body || data;
 
-		if (!tokens) return;
+		if (!tokens || tokens.error) return;
 
-		// localStorage.setItem('access-token', JSON.stringify(tokens));
 		dispatch(storeActions.setSpotify({ tokens }));
-
-		spotifyAPI.setAccessToken(tokens.access_token);
-		spotifyAPI.setRefreshToken(tokens.refresh_token);
 	};
 
 	const handleError = (err, retry) => {
@@ -60,16 +57,14 @@ export const Spotify = (props) => {
 		console.error('Error', err?.body, err?.headers, err?.statusCode);
 
 		if (status === 401) {
-			reauthorize().then(() => {
-				if (retry) retry();
-			});
+			reauthorize()
+				.then(() => { if (retry) retry(); });
 			return;
 		}
 
 		if (err?.body?.error === 'invalid_grant') {
-			reauthorize().then(() => {
-				if (retry) retry();
-			});
+			reauthorize()
+				.then(() => { if (retry) retry();	});
 			return;
 		}
 
@@ -158,9 +153,7 @@ export const Spotify = (props) => {
 	};
 
 	const getTrackAnalysis = () => {
-		if (!track?.item?.id) {
-			return;
-		}
+		if (!track?.item?.id) return;
 
 		spotifyAPI
 			.getAudioAnalysisForTrack(track?.item?.id)
@@ -222,15 +215,25 @@ export const Spotify = (props) => {
 		if (ev.key === 'MediaTrackNext') next();
 	});
 
+	// Get initial play state
+	useEffect(updateStatus, []);
+
 	// Fetch track info
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (!spotifyAPI.getAccessToken()) return;
+
 			updateStatus();
 		}, 2500); // 2.5 seconds
 
 		return () => clearInterval(interval);
 	}, []);
+
+	// If tokens ever change, update Spotify API
+	useEffect(() => {
+		spotifyAPI.setAccessToken(spotify.tokens?.access_token);
+		spotifyAPI.setRefreshToken(spotify.tokens?.refresh_token);
+	}, [spotify.tokens?.access_token, spotify.tokens?.refresh_token]);
 
 	// Update progress bar
 	useEffect(() => {
@@ -249,15 +252,18 @@ export const Spotify = (props) => {
 	// Get track audio analysis on track change
 	// useEffect(getTrackAnalysis, [track?.item?.id])
 
-	// Get initial play state
-	useEffect(updateStatus, []);
 
 	// Loading or authenticating
 	if (track === null)
 		return (
 			<div className="loading-screen">
 				<Icon.Boombox className="big-icon" />
-				<div id="weather-description">Music loading...</div>
+				<div
+					className="loading-text show-unlit"
+					data-unlit={Utility.generateUnlitLCD('Music loading...')}
+				>
+					Music loading...
+				</div>
 			</div>
 		);
 
@@ -266,7 +272,12 @@ export const Spotify = (props) => {
 		return (
 			<div className="loading-screen">
 				<Icon.VolumeMute className="big-icon" />
-				<div id="weather-description">Music could not load</div>
+				<div
+					className="loading-text show-unlit"
+					data-unlit={Utility.generateUnlitLCD('Music could not load')}
+				>
+					Music could not load
+				</div>
 			</div>
 		);
 
@@ -275,7 +286,12 @@ export const Spotify = (props) => {
 		return (
 			<div className="loading-screen">
 				<Icon.Boombox className="big-icon" />
-				<div id="weather-description">Music not playing</div>
+				<div
+					className="loading-text show-unlit"
+					data-unlit={Utility.generateUnlitLCD('Music not playing')}
+				>
+					Music not playing
+				</div>
 			</div>
 		);
 
@@ -290,7 +306,7 @@ export const Spotify = (props) => {
 							(marqueeRef.current.offsetWidth || 0) < (marqueeRef.current.scrollWidth || 0) ? '' : 'show-unlit'
 						}
 						data-unlit={Utility.generateUnlitLCD(track?.item?.name || 'Unknown Song', [':'])}
-						data-overflow={(marqueeRef.current.offsetWidth || 0) < (marqueeRef.current.scrollWidth || 0)}
+						data-overflow={(marqueeRef.current?.offsetWidth || 0) > (marqueeRef.current?.parentNode?.offsetWidth || 0)}
 					>
 						{track?.item?.name || 'Unknown Song'}
 					</div>

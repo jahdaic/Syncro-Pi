@@ -112,7 +112,7 @@
 	};
 
 	& #compass-directions, & #compass-tilt, & #compass-climb {
-		filter: invert(69%) sepia(74%) saturate(3047%) hue-rotate(348deg) brightness(163%) contrast(85%) drop-shadow(var(--cyberpunk-shadow));
+		filter: invert(69%) sepia(74%) saturate(3047%) hue-rotate(353deg) brightness(163%) contrast(85%) drop-shadow(var(--cyberpunk-shadow));
 	}	
 
 	& #top *,
@@ -175,8 +175,9 @@
 		filter: invert(21%) sepia(95%) saturate(1300%) hue-rotate(5deg) brightness(104%) contrast(104%) drop-shadow(0px 0px 20px rgba(var(--text-color), 0.8));
 	};
 
-	& #spotify-controls [role=button] {
+	& #spotify-controls [role=button], button {
 		/* border: 1px solid rgb(var(--text-color)); */
+		border-radius: 0;
 		background-color: rgb(var(--light-color));
 		box-shadow: var(--cyberpunk-shadow);
 		padding-top: 0.5em;

@@ -18,7 +18,7 @@ root.render(
 	<React.StrictMode>
 		<Provider store={store}>
 			<PersistGate loading={null} persistor={persistStore(store)}>
-				<BrowserRouter basename="/Syncro-Pi">
+				<BrowserRouter basename={process.env.REACT_APP_SUBDIRECTORY}>
 					<Router />
 				</BrowserRouter>
 			</PersistGate>

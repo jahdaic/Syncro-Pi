@@ -118,8 +118,7 @@ export const Weather = (props) => {
 			<div className="loading-screen">
 				<Icon.CloudArrowDown className="big-icon" />
 				<div
-					id="weather-description"
-					className="show-unlit"
+					className="loading-text show-unlit"
 					data-unlit={Utility.generateUnlitLCD('Weather loading...')}
 				>
 					Weather loading...
@@ -132,8 +131,7 @@ export const Weather = (props) => {
 			<div className="loading-screen">
 				<Icon.ExclamationDiamond className="big-icon" />
 				<div
-					id="weather-description"
-					className="show-unlit"
+					className="loading-text show-unlit"
 					data-unlit={Utility.generateUnlitLCD('Error loading weather')}
 				>
 					Error loading weather

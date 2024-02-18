@@ -51,6 +51,7 @@ body {
 	padding: 0;
 	height: 100%;
 	width: 100%;
+	overflow-x: hidden;
 }
 
 body {
@@ -193,6 +194,13 @@ option:checked:before {
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-around;
+}
+
+.loading-text {
+	font-size: 1em;
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
+	text-align: center;
 }
 
 .big-icon {

@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-bootstrap-icons';
+import { useSelector } from 'react-redux';
 import Location from '../../components/Location';
 import * as Utility from '../../scripts/utility';
+import { selectGPSState } from '../../store/store.selectors';
+
 
 import '../../css/performance.css';
 
 const resolution = 100; // 100 milliseconds
 
 export const Performance = (props) => {
+	const gps = useSelector(selectGPSState);
 	const [time, setTime] = useState(new Date());
-	const [speed, setSpeed] = useState(0);
 	const [run, setRun] = useState({ start: null, end: null, topSpeed: null, to60: null, times: [], speeds: [] });
 
 	const updateTime = () => setTime(new Date());
@@ -24,8 +27,8 @@ export const Performance = (props) => {
 			return {
 				...currentRun,
 				start: currentRun.start || now,
-				topSpeed: Math.max(speed, currentRun.topSpeed),
-				to60: speed >= 60 && !currentRun.to60 ? speed : currentRun.to60,
+				topSpeed: Math.max(gps?.speed, currentRun.topSpeed),
+				to60: gps?.speed >= 60 && !currentRun.to60 ? gps?.speed : currentRun.to60,
 				// times: [...currentRun.times, now],
 				// speeds: [...currentRun.speeds, currentSpeed || 0]
 			};
@@ -41,7 +44,7 @@ export const Performance = (props) => {
 
 	const resetTimer = () => setRun({ start: null, end: null, topSpeed: null, to60: null, times: [], speeds: [] });
 
-	const getCurrentSpeed = () => String(Math.floor(speed || 0)).padStart(3, '0');
+	const getCurrentSpeed = () => String(Math.floor(gps.speed || 0)).padStart(3, '0');
 
 	const getTopSpeed = () => String(Math.floor(run.topSpeed || 0)).padStart(3, '0');
 
@@ -63,18 +66,21 @@ export const Performance = (props) => {
 		return () => clearInterval(interval);
 	}, []);
 
-	if (!speed && speed !== 0)
+	if (gps.failure)
 		return (
-			<div id="weather">
-				<Location onUpdate={(location) => setSpeed(location?.speed)} />
+			<div className="loading-screen">
 				<Icon.PinMap className="big-icon" />
-				<div id="weather-description">Error getting location</div>
+				<div
+					className="loading-text show-unlit"
+					data-unlit={Utility.generateUnlitLCD('Error getting location')}
+				>
+					Error getting location
+				</div>
 			</div>
 		);
 
 	return (
 		<div id="performance">
-			<Location onUpdate={(location) => setSpeed(location?.speed)} />
 			<div id="performance-speed" className="show-unlit" data-unlit={Utility.generateUnlitLCD(getCurrentSpeed())}>
 				{getCurrentSpeed()}
 			</div>

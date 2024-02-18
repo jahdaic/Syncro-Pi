@@ -12,7 +12,6 @@ export const Compass = (props) => {
 	const settings = useSelector(selectSettingState);
 	const location = useSelector(selectGPSState);
 	const gyro = useSelector(selectGyroState);
-	const [position, setPosition] = useState(null);
 
 	const getCompassSize = () => {
 		const coordinateHeight = document.getElementById('compass-coordinates')?.clientHeight || 0;
@@ -26,19 +25,19 @@ export const Compass = (props) => {
 	};
 
 	const getDisplayLatitude = () => {
-		if (!location?.latitude) return '';
+		// if (!location?.latitude) return '';
 
 		const direction = location?.latitude >= 0 ? 'N' : 'S';
-		const latitude = Math.abs(location?.latitude).toFixed(3);
+		const latitude = Math.abs(location?.latitude || 0).toFixed(3);
 
 		return <>{latitude}<span className="units">° {direction}</span></>;
 	};
 
 	const getDisplayLongitude = () => {
-		if (!location?.longitude) return '';
+		// if (!location?.longitude) return '';
 
 		const direction = location?.latitude >= 0 ? 'E' : 'W';
-		const longitude = Math.abs(location?.longitude).toFixed(3);
+		const longitude = Math.abs(location?.longitude || 0).toFixed(3);
 
 		return <>{longitude}<span className="units">° {direction}</span></>;
 	};
@@ -65,29 +64,25 @@ export const Compass = (props) => {
 		return <>{sign}{String(Math.abs(value)).padStart(length, '0')}<span className="units"> {units}</span></>;
 	};
 
-	console.log('GPS', location);
+	// if (location === null)
+	// 	return (
+	// 		<div className="loading-screen">
+	// 			<Icon.Compass className="big-icon" />
+	// 			<div
+	// 				className="loading-text show-unlit"
+	// 				data-unlit={Utility.generateUnlitLCD('Compass loading...')}
+	// 			>
+	// 				Compass loading...
+	// 			</div>
+	// 		</div>
+	// 	);
 
-	if (location === null)
-		return (
-			<div className="loading-screen">
-				<Icon.Compass className="big-icon" />
-				<div
-					id="weather-description"
-					className="show-unlit"
-					data-unlit={Utility.generateUnlitLCD('Compass loading...')}
-				>
-					Compass loading...
-				</div>
-			</div>
-		);
-
-	if (location === -1)
+	if (location.failure)
 		return (
 			<div className="loading-screen">
 				<Icon.PinMap className="big-icon" />
 				<div
-					id="weather-description"
-					className="show-unlit"
+					className="loading-text show-unlit"
 					data-unlit={Utility.generateUnlitLCD('Error getting location')}
 				>
 					Error getting location
@@ -97,8 +92,6 @@ export const Compass = (props) => {
 
 	return (
 		<div id="compass">
-			<Gyroscope onUpdate={setPosition} />
-
 			<div id="compass-coordinates">
 				<span
 					id="compass-coordinates-latitude"
@@ -118,10 +111,13 @@ export const Compass = (props) => {
 			</div>
 
 			<div id="compass-compass" style={{ height: getCompassSize(), width: getCompassSize() }}>
-				<div id="compass-directions" style={{ transform: `rotate(${position?.heading || 0}deg)` }} />
-				<div id="compass-tilt" style={{ transform: `rotate(${position?.tilt || 0}deg)` }} />
-				<div id="compass-tilt-value">{`${Math.round(position?.tilt || 0)}°`}</div>
-				<div id="compass-climb" style={{ backgroundPositionY: `${(-(position?.climb || 0) * 79) / 45 + 50}%` }} />
+				<div id="compass-directions" style={{ transform: `rotate(${gyro?.heading || location?.heading || 0}deg)` }} />
+				<div id="compass-tilt" style={{ transform: `rotate(${gyro?.tilt || location?.tilt || 0}deg)` }} />
+				<div id="compass-tilt-value">{`${Math.round(gyro?.tilt || location?.tilt || 0)}°`}</div>
+				<div
+					id="compass-climb"
+					style={{ backgroundPositionY: `${(-(gyro?.climb || location?.climb || 0) * 79) / 45 + 50}%` }}
+				/>
 			</div>
 
 			<div id="compass-positioning">

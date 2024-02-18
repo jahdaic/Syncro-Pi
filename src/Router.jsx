@@ -1,10 +1,12 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Container from './components/page/Container';
 import TopBar from './components/page/Topbar';
 import BottomBar from './components/page/BottomBar';
-import { selectSettingState, selectSystemState } from './store/store.selectors';
+import { selectSystemState } from './store/store.selectors';
+import Location from './components/Location';
+import Gyroscope from './components/Gyroscope';
 
 const AnalogClock = lazy(() => import('./pages/AnalogClock'));
 const DigitalClock = lazy(() => import('./pages/DigitalClock'));
@@ -18,6 +20,7 @@ const Settings = lazy(() => import('./pages/Settings'));
 const Test = lazy(() => import('./pages/Test'));
 
 export const Router = (props) => {
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const system = useSelector(selectSystemState);
@@ -29,6 +32,9 @@ export const Router = (props) => {
 
 	return (
 		<Container>
+			<Location />
+			<Gyroscope />
+
 			<TopBar />
 
 			<div id="content">
