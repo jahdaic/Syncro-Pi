@@ -89,7 +89,7 @@ export const Settings = ({ ...props }) => {
 		navigate(`/${system.view || ''}`);
 	};
 
-	console.log('SETTINGS', settings);
+	if(process.env.NODE_ENV === 'development') console.log('SETTINGS', settings);
 
 	return (
 		<div id="settings">

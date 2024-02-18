@@ -42,7 +42,7 @@ export const Gyro = ({ interval = 1, ...props }) => {
 	});
 
 	const cleanupDeviceOrientationData = (data) => {
-		console.log('GYRO', gyro)
+		if(process.env.NODE_ENV === 'development') console.log('GYRO', gyro)
 		return {
 			heading: data.webkitCompassHeading || data.alpha || 0,
 			climb: data.beta ? data.beta - 90 : 0,
@@ -58,14 +58,16 @@ export const Gyro = ({ interval = 1, ...props }) => {
 				.query({ name: 'gyroscope' })
 				.then((permission) => {
 					if (permission.state === 'granted' || permission.state === 'prompt') {
-						console.log('Permission granted');
+						if(process.env.NODE_ENV === 'development') console.log('Permission granted');
 						setGyroscope(new window.Gyroscope({ frequency: interval }));
 
 						gyroscope.addEventListener('reading', (ev) => {
 							dispatch(storeActions.setGyro(cleanupGyroscopeData(gyroscope)));
-							console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
-							console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
-							console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
+							if(process.env.NODE_ENV === 'development') {
+								console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
+								console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
+								console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
+							}
 						});
 
 						gyroscope.start();
@@ -77,15 +79,18 @@ export const Gyro = ({ interval = 1, ...props }) => {
 				.catch(dataFailure);
 		}
 		else if (window.Gyroscope) {
-			console.log('Permission not granted');
+			if(process.env.NODE_ENV === 'development') console.log('Permission not granted');
 
 			setGyroscope(new window.Gyroscope({ frequency: interval }));
 
 			gyroscope.addEventListener('reading', (ev) => {
 				dispatch(storeActions.setGyro(cleanupGyroscopeData(gyroscope)));
-				console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
-				console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
-				console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
+
+				if(process.env.NODE_ENV === 'development') {
+					console.log(`Angular velocity along the X-axis ${gyroscope.x}`);
+					console.log(`Angular velocity along the Y-axis ${gyroscope.y}`);
+					console.log(`Angular velocity along the Z-axis ${gyroscope.z}`);
+				}
 			});
 
 			gyroscope.start();

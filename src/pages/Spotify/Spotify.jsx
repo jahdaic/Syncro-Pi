@@ -209,7 +209,7 @@ export const Spotify = (props) => {
 		track?.is_playing ? (track?.progress_ms || 0) + Date.now() - (track?.timestamp || 0) : track?.progress_ms;
 
 	useHotkeys('*', (ev) => {
-		console.log(ev);
+		if(process.env.NODE_ENV === 'development') console.log(ev);
 		if (ev.key === 'MediaPlayPause') playPause();
 		if (ev.key === 'MediaTrackPrevious') previous();
 		if (ev.key === 'MediaTrackNext') next();

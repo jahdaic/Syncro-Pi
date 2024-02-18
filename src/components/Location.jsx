@@ -20,10 +20,12 @@ export const Location = ({ interval = 1000, ...props }) => {
 	const [confirmed, setConfirmed] = useState(true);
 	const [failures, setFailures] = useState(0);
 
-	console.log('GPS', method, gps)
+	if(process.env.NODE_ENV === 'development') console.log('GPS', method, gps)
 
 	const dataFailure = (err, forceNext) => {
-		console.log('Failure', method, failures, failureTolerance, forceNext, new Date().toLocaleTimeString(), err);
+		if(process.env.NODE_ENV === 'development')
+			console.log('Failure', method, failures, failureTolerance, forceNext, new Date().toLocaleTimeString(), err);
+
 		dispatch(storeActions.setGPS({error: err}));
 
 		setFailures((currentFailures) => {
@@ -36,13 +38,13 @@ export const Location = ({ interval = 1000, ...props }) => {
 						return currentMethod;
 					}
 
-					console.log(`Changing location method to ${newMethod}`);
+					if(process.env.NODE_ENV === 'development') console.log(`Changing location method to ${newMethod}`);
 					setFailedMethods((currentFailedMethods) => [...currentFailedMethods, currentMethod]);
 					return newMethod;
 				});
 			}
 			else {
-				console.log(`Failed to get location via ${method}`);
+				if(process.env.NODE_ENV === 'development') console.log(`Failed to get location via ${method}`);
 				console.error(err);
 				return currentFailures + 1;
 			}

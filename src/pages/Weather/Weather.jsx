@@ -20,7 +20,7 @@ export const Weather = (props) => {
 	const [failures, setFailures] = useState(0);
 
 	const updateWeather = () => {
-		console.log('WEATHER', weather);
+		if(process.env.NODE_ENV === 'development') console.log('WEATHER', weather);
 		if (!process.env.REACT_APP_OPEN_WEATHER_API_KEY) {
 			dispatch(storeActions.setWeather(false));
 			return;
